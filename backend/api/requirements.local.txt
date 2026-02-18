@@ -1,0 +1,41 @@
+duckdb
+uvicorn
+fastapi
+pydantic
+modal
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-instrumentation-fastapi
+tenacity
+google-auth
+pandas
+pyarrow
+jinja2
+clerk-backend-api
+##TODO: its bizarre that we need this but a todo for later.
+openai
+convex
+tiktoken
+python-multipart
+# celery specific packages
+httpx
+# this is for running bg_tasks "scalably"
+flower
+celery[redis] 
+# This is for testing the Procfile locally
+honcho
+openpyxl
+
+-e ../libs/folio
+-e ../libs/folio/utils/storage_backend
+-e ../libs/folio/utils/workflow_runner_client
+-e ../libs/folio/utils/storage_helper
+-e ../libs/folio/utils/cell_states
+-e ../libs/folio/utils/convex_client
+-e ../libs/folio/utils/random_access_flushable_queue
+-e ../libs/folio/utils/shared_types
+-e ../libs/folio/utils/job_executor
+-e ../libs/folio/utils/transcription_client
+-e ../libs/folio/utils/workflow_tools
+-e ../libs/folio/utils/dataset_processor
+-e ../libs/folio/utils/usage_cop

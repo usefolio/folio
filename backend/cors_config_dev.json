@@ -1,0 +1,18 @@
+[
+    {
+        "origin": [
+            "https://*.vercel.app",
+            "http://localhost:5173"
+        ],
+        "method": [
+            "PUT",
+            "OPTIONS"
+        ],
+        "responseHeader": [
+            "Content-Type",
+            "access-control-allow-origin",
+            "access-control-allow-header"
+        ],
+        "maxAgeSeconds": 3600
+    }
+]

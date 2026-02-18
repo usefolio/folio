@@ -1,0 +1,17 @@
+[
+    {
+        "origin": [
+            "https://www.folio.app"
+        ],
+        "method": [
+            "PUT",
+            "OPTIONS"
+        ],
+        "responseHeader": [
+            "Content-Type",
+            "access-control-allow-origin",
+            "access-control-allow-header"
+        ],
+        "maxAgeSeconds": 3600
+    }
+]

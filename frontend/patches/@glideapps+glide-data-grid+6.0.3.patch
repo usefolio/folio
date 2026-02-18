@@ -1,0 +1,16 @@
+diff --git a/node_modules/@glideapps/glide-data-grid/src/internal/data-grid/render/data-grid-render.header.ts b/node_modules/@glideapps/glide-data-grid/src/internal/data-grid/render/data-grid-render.header.ts
+index 962a603..ba2c996 100644
+--- a/node_modules/@glideapps/glide-data-grid/src/internal/data-grid/render/data-grid-render.header.ts
++++ b/node_modules/@glideapps/glide-data-grid/src/internal/data-grid/render/data-grid-render.header.ts
+@@ -44,8 +44,10 @@ export function drawGridHeaders(
+     const font = outerTheme.headerFontFull;
+     // Assinging the context font too much can be expensive, it can be worth it to minimze this
+     ctx.font = font;
++    const FORCE_HEADER_DRAW = true;
+     walkColumns(effectiveCols, 0, translateX, 0, totalHeaderHeight, (c, x, _y, clipX) => {
+-        if (damage !== undefined && !damage.has([c.sourceIndex, -1])) return;
++        if (!FORCE_HEADER_DRAW && damage !== undefined && !damage.has([c.sourceIndex, -1])) return;
++        // if (damage !== undefined && !damage.has([c.sourceIndex, -1])) return;
+         const diff = Math.max(0, clipX - x);
+         ctx.save();
+         ctx.beginPath();

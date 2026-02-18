@@ -1,0 +1,10 @@
+pandas
+pyarrow
+tiktoken
+chardet
+pytest
+pytest-cov
+pytest-asyncio
+-e ../storage_helper
+-e ../convex_client
+-e ../shared_types

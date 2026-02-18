@@ -1,0 +1,332 @@
+steps:
+  #1A: copy libs for API
+  - name: "bash"
+    script: |
+      #!/usr/bin/env bash
+      cp -R backend/libs './backend/api/libs'
+  #1B: copy queue_processor for API
+  - name: "bash"
+    script: |
+      #!/usr/bin/env bash
+      cp -R backend/queue_processor './backend/api/queue_processor'
+  #1C: build the API app with Buildpacks
+  - name: gcr.io/k8s-skaffold/pack
+    args:
+      - build
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+      - "--builder=gcr.io/buildpacks/builder:latest"
+      - "--network=cloudbuild"
+      - "--path=./backend/api"
+    id: Buildpack-API
+    entrypoint: pack
+
+  #2A: copy libs for Queue Processor
+  - name: "bash"
+    script: |
+      #!/usr/bin/env bash
+      cp -R backend/libs './backend/queue_processor/libs'
+  #2B: pack the Queue Processor
+  - name: gcr.io/k8s-skaffold/pack
+    args:
+      - build
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME-redis:$COMMIT_SHA
+      - "--builder=gcr.io/buildpacks/builder:latest"
+      - "--network=cloudbuild"
+      - "--path=./backend/queue_processor"
+    id: Buildpack-redis
+    entrypoint: pack
+
+  #2C: Build a custom Dockerfile that adds redis
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - "--build-arg"
+      - COMMIT_SHA=$COMMIT_SHA
+      - "--build-arg"
+      - SERVICE_NAME=$_SERVICE_NAME
+      - "--build-arg"
+      - REPO_NAME=$REPO_NAME
+      - "--progress=plain"
+      - "-t"
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME-redis:$COMMIT_SHA
+      - "-f"
+      - backend/Dockerfile
+      - "backend"
+
+  #3A: Push the built image of API to the container registry
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+    id: Push-API
+
+  #3B: Push the built image of Redis to the container registry
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME-redis:$COMMIT_SHA
+    id: Push-Redis
+
+  #3C: Keep nginx config secret in sync for Cloud Run sidecar mounts
+  - name: "gcr.io/google.com/cloudsdktool/google-cloud-cli:slim"
+    id: Sync-Nginx-Secret
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+
+        if ! gcloud secrets describe "$_NGINX_CONFIG_SECRET" --project="$PROJECT_ID" >/dev/null 2>&1; then
+          echo "Creating secret $_NGINX_CONFIG_SECRET in project $PROJECT_ID"
+          gcloud secrets create "$_NGINX_CONFIG_SECRET" \
+            --project="$PROJECT_ID" \
+            --replication-policy=automatic
+        fi
+
+        echo "Uploading nginx.conf as latest version for $_NGINX_CONFIG_SECRET"
+        gcloud secrets versions add "$_NGINX_CONFIG_SECRET" \
+          --project="$PROJECT_ID" \
+          --data-file=backend/nginx.conf
+
+  #3D: Bootstrap service on first deploy so update commands are idempotent
+  - name: "gcr.io/google.com/cloudsdktool/google-cloud-cli:slim"
+    id: Bootstrap-Cloud-Run-Service
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+
+        if gcloud run services describe "$_SERVICE_NAME" \
+          --platform=managed \
+          --region="$_DEPLOY_REGION" \
+          --project="$PROJECT_ID" >/dev/null 2>&1; then
+          echo "Service $_SERVICE_NAME already exists; skipping bootstrap."
+          exit 0
+        fi
+
+        echo "Service $_SERVICE_NAME not found; creating bootstrap revision with nginx sidecar."
+        gcloud run deploy "$_SERVICE_NAME" \
+          --platform=managed \
+          --region="$_DEPLOY_REGION" \
+          --project="$PROJECT_ID" \
+          --quiet \
+          --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID \
+          --concurrency=$_CONTAINER_CONCURRENCY \
+          --timeout=$_REQUEST_TIMEOUT_SECONDS \
+          --max-instances=$_MAX_SCALE \
+          --execution-environment=gen2 \
+          --container=nginx \
+          --image=nginx \
+          --cpu=$_NGINX_CPU \
+          --memory=$_NGINX_MEMORY \
+          --port=$_NGINX_PORT \
+          --startup-probe=timeoutSeconds=240,periodSeconds=240,failureThreshold=1,tcpSocket.port=$_NGINX_PORT \
+          --update-secrets=/etc/nginx/conf.d/default.conf=$_NGINX_CONFIG_SECRET:latest
+
+  - name: "gcr.io/google.com/cloudsdktool/google-cloud-cli:slim"
+    args:
+      - bash
+      - -c
+      - |
+        echo "Running gcloud command with the following arguments:"
+        echo "gcloud run services update $_SERVICE_NAME --add-volume=name=new_column_parquet_file_storage,type=in-memory --container=folio-sheet-server-api --add-volume-mount=volume=new_column_parquet_file_storage,mount-path=/mnt/tmp --image=$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA --cpu=$_API_CPU --memory=$_API_MEMORY --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID --region=$_DEPLOY_REGION --set-env-vars=CLERK_SECRET_KEY=$_CLERK_SECRET_KEY,FOLIO_API_KEY=$_FOLIO_API_KEY,MODAL_TOKEN_ID=$_MODAL_TOKEN_ID,MODAL_TOKEN_SECRET=$_MODAL_TOKEN_SECRET,PYTHONPATH=${_PYTHONPATH},CONVEX_HTTP_CLIENT_API_KEY=$_CONVEX_HTTP_CLIENT_API_KEY,REDIS_URL=$_REDIS_URL,PORT=$_API_PORT,TEST_FOLIO_SHEET_CONFIG=$_TEST_FOLIO_SHEET_CONFIG,FLOWER_UNAUTHENTICATED_API=$_FLOWER_UNAUTHENTICATED_API,LIBS_PATH=$_LIBS_PATH,MOUNT_PATH=/mnt/tmp,RESULT_LIMIT=$_RESULT_LIMIT,ENV=$_ENV,BUCKET_NAME=$_BUCKET_NAME,FAL_KEY=$_FAL_KEY,API_BASE_URL=$_API_BASE_URL,PREFECT_API_URL=$_PREFECT_API_URL,PREFECT_API_KEY=$_PREFECT_API_KEY,PREFECT_DEPLOYMENT_ID=$_PREFECT_DEPLOYMENT_ID,METRONOME_API_TOKEN=$_METRONOME_API_TOKEN,GOOGLE_ACCESS_KEY_ID=$_GOOGLE_ACCESS_KEY_ID,GOOGLE_ACCESS_KEY_SECRET=$_GOOGLE_ACCESS_KEY_SECRET,GOOGLE_SERVICE_ACCOUNT_JSON,ENABLE_BILLING_CHECKS=$_ENABLE_BILLING_CHECKS --quiet"
+    id: Log-and-Deploy-API
+
+  #4B: Deploy the API container to Cloud Run
+  - name: "gcr.io/google.com/cloudsdktool/google-cloud-cli:slim"
+    args:
+      - beta
+      - run
+      - services
+      - update
+      - $_SERVICE_NAME
+      - --platform=managed
+      - --region=$_DEPLOY_REGION
+      - --quiet
+      - --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID
+      - --concurrency=$_CONTAINER_CONCURRENCY
+      - --timeout=$_REQUEST_TIMEOUT_SECONDS
+      - --max-instances=$_MAX_SCALE
+      - --execution-environment=gen2
+      - --no-cpu-throttling
+      - --add-volume=name=new_column_parquet_file_storage,type=in-memory
+      - --container=folio-sheet-server-api
+      - --add-volume-mount=volume=new_column_parquet_file_storage,mount-path=/mnt/tmp
+      - --image=$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+      - --cpu=$_API_CPU
+      - --memory=$_API_MEMORY
+      - --startup-probe=timeoutSeconds=240,periodSeconds=240,failureThreshold=1,tcpSocket.port=$_API_PORT
+      - --set-env-vars=CLERK_SECRET_KEY=$_CLERK_SECRET_KEY,FOLIO_API_KEY=$_FOLIO_API_KEY,MODAL_TOKEN_ID=$_MODAL_TOKEN_ID,MODAL_TOKEN_SECRET=$_MODAL_TOKEN_SECRET,PYTHONPATH=${_PYTHONPATH},CONVEX_HTTP_CLIENT_API_KEY=$_CONVEX_HTTP_CLIENT_API_KEY,REDIS_URL=$_REDIS_URL,PORT=$_API_PORT,TEST_FOLIO_SHEET_CONFIG=$_TEST_FOLIO_SHEET_CONFIG,FLOWER_UNAUTHENTICATED_API=$_FLOWER_UNAUTHENTICATED_API,LIBS_PATH=$_LIBS_PATH,MOUNT_PATH=/mnt/tmp,RESULT_LIMIT=$_RESULT_LIMIT,ENV=$_ENV,BUCKET_NAME=$_BUCKET_NAME,FAL_KEY=$_FAL_KEY,API_BASE_URL=$_API_BASE_URL,PREFECT_API_URL=$_PREFECT_API_URL,PREFECT_API_KEY=$_PREFECT_API_KEY,PREFECT_DEPLOYMENT_ID=$_PREFECT_DEPLOYMENT_ID,METRONOME_API_TOKEN=$_METRONOME_API_TOKEN,GOOGLE_ACCESS_KEY_ID=$_GOOGLE_ACCESS_KEY_ID,GOOGLE_ACCESS_KEY_SECRET=$_GOOGLE_ACCESS_KEY_SECRET,GOOGLE_SERVICE_ACCOUNT_JSON=$_GOOGLE_SERVICE_ACCOUNT_JSON,ENABLE_BILLING_CHECKS=$_ENABLE_BILLING_CHECKS
+
+    id: Deploy-API
+    entrypoint: gcloud
+
+  #4A: Deploy the redis container to Cloud Run
+  - name: "gcr.io/google.com/cloudsdktool/google-cloud-cli:slim"
+    args:
+      - beta
+      - run
+      - services
+      - update
+      - $_SERVICE_NAME
+      - --platform=managed
+      - --region=$_DEPLOY_REGION
+      - --quiet
+      - --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID
+      - --concurrency=$_CONTAINER_CONCURRENCY
+      - --timeout=$_REQUEST_TIMEOUT_SECONDS
+      - --max-instances=$_MAX_SCALE
+      - --execution-environment=gen2
+      - --no-cpu-throttling
+      - --container=folio-sheet-server-api-redis
+      - --add-volume-mount=volume=new_column_parquet_file_storage,mount-path=/mnt/tmp
+      - --startup-probe=timeoutSeconds=240,periodSeconds=240,failureThreshold=1,tcpSocket.port=6379
+      - --image=$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME-redis:$COMMIT_SHA
+      - --cpu=$_REDIS_CPU
+      - --memory=$_REDIS_MEMORY
+      - --set-env-vars=MODAL_TOKEN_ID=$_MODAL_TOKEN_ID,MODAL_TOKEN_SECRET=$_MODAL_TOKEN_SECRET,PYTHONPATH=${_PYTHONPATH},CONVEX_HTTP_CLIENT_API_KEY=$_CONVEX_HTTP_CLIENT_API_KEY,REDIS_URL=$_REDIS_URL,API_PORT=$_API_PORT,TEST_FOLIO_SHEET_CONFIG=$_TEST_FOLIO_SHEET_CONFIG,FLOWER_UNAUTHENTICATED_API=$_FLOWER_UNAUTHENTICATED_API,LIBS_PATH=$_LIBS_PATH,MOUNT_PATH=/mnt/tmp,RESULT_LIMIT=$_RESULT_LIMIT,ENV=$_ENV,BUCKET_NAME=$_BUCKET_NAME,FAL_KEY=$_FAL_KEY,FOLIO_API_KEY=$_FOLIO_API_KEY,API_BASE_URL=$_API_BASE_URL,PREFECT_API_URL=$_PREFECT_API_URL,PREFECT_API_KEY=$_PREFECT_API_KEY,PREFECT_DEPLOYMENT_ID=$_PREFECT_DEPLOYMENT_ID,CLERK_SECRET_KEY=$_CLERK_SECRET_KEY,METRONOME_API_TOKEN=$_METRONOME_API_TOKEN,GOOGLE_ACCESS_KEY_ID=$_GOOGLE_ACCESS_KEY_ID,GOOGLE_ACCESS_KEY_SECRET=$_GOOGLE_ACCESS_KEY_SECRET,GOOGLE_SERVICE_ACCOUNT_JSON=$_GOOGLE_SERVICE_ACCOUNT_JSON,ENABLE_BILLING_CHECKS=$_ENABLE_BILLING_CHECKS
+
+    id: Deploy-Redis
+    entrypoint: gcloud
+
+  #4C: Reconcile nginx sidecar every deploy (routing entrypoint container)
+  - name: "gcr.io/google.com/cloudsdktool/google-cloud-cli:slim"
+    args:
+      - run
+      - services
+      - update
+      - $_SERVICE_NAME
+      - --platform=managed
+      - --region=$_DEPLOY_REGION
+      - --quiet
+      - --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID
+      - --concurrency=$_CONTAINER_CONCURRENCY
+      - --timeout=$_REQUEST_TIMEOUT_SECONDS
+      - --max-instances=$_MAX_SCALE
+      - --execution-environment=gen2
+      - --no-cpu-throttling
+      - --container=nginx
+      - --depends-on=folio-sheet-server-api
+      - --image=nginx
+      - --cpu=$_NGINX_CPU
+      - --memory=$_NGINX_MEMORY
+      - --port=$_NGINX_PORT
+      - --clear-volume-mounts
+      - --startup-probe=timeoutSeconds=240,periodSeconds=240,failureThreshold=1,tcpSocket.port=$_NGINX_PORT
+      - --update-secrets=/etc/nginx/conf.d/default.conf=$_NGINX_CONFIG_SECRET:latest
+    id: Deploy-Nginx
+    entrypoint: gcloud
+
+  #4D: Ensure Cloud Run can be called from browsers (CORS preflight requires unauthenticated invoke)
+  - name: "gcr.io/google.com/cloudsdktool/google-cloud-cli:slim"
+    id: Configure-Cloud-Run-Invoker
+    env:
+      - "ALLOW_UNAUTH_SUB=${_ALLOW_UNAUTHENTICATED}"
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+
+        allow_unauth="${ALLOW_UNAUTH_SUB:-}"
+        if [ "${allow_unauth}" != "true" ]; then
+          echo "_ALLOW_UNAUTHENTICATED=${allow_unauth:-<unset>}; skipping public invoker binding."
+          exit 0
+        fi
+
+        echo "Granting allUsers invoker role on $_SERVICE_NAME in $_DEPLOY_REGION"
+        gcloud run services add-iam-policy-binding "$_SERVICE_NAME" \
+          --platform=managed \
+          --region="$_DEPLOY_REGION" \
+          --member="allUsers" \
+          --role="roles/run.invoker" \
+          --quiet
+
+  #5: Deploy Modal application  
+  - name: "python:3.11-slim"
+    env:
+      - "ENV=${_ENV}"
+      - "BUCKET_NAME=${_BUCKET_NAME}"
+      - "_BUCKET_NAME=${_BUCKET_NAME}"
+    script: |
+      #!/bin/bash
+      set -e
+      cd /workspace/backend/modal_functions
+      
+      # Install gcloud CLI
+      apt-get update && apt-get install -y curl gnupg lsb-release
+      curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+      echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+      apt-get update && apt-get install -y google-cloud-cli
+      
+      # Get Modal secrets from Google Secret Manager (same creds for dev/prod)
+      export MODAL_TOKEN_ID=$(gcloud secrets versions access latest --secret="modal-token-id")
+      export MODAL_TOKEN_SECRET=$(gcloud secrets versions access latest --secret="modal-token-secret")
+      export MODAL_ENVIRONMENT=${ENV}
+      export PYTHONPATH=/workspace/backend/libs
+      
+      # Install modal and dependencies
+      pip install modal
+      pip install -r requirements.txt
+      
+      echo "Deploying Modal application to environment: ${ENV}"
+      modal deploy main.py --env=${ENV} --name="folio-sheet"
+      echo "Modal deployment completed successfully"
+    id: Deploy-Modal
+
+# Declare the image produced by the build
+images:
+  - >-
+    $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+  - >-
+    $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME-redis:$COMMIT_SHA
+
+options:
+  substitutionOption: ALLOW_LOOSE
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8
+  diskSizeGb: 200
+
+substitutions:
+  _DEPLOY_REGION: us-central1
+  _AR_HOSTNAME: us-central1-docker.pkg.dev
+  _PLATFORM: managed
+  _API_CPU: "4"
+  _API_MEMORY: "8Gi"
+  _REDIS_CPU: "2"
+  _REDIS_MEMORY: "8Gi"
+  _NGINX_CPU: "1"
+  _NGINX_MEMORY: "256Mi"
+  _NGINX_PORT: "8080"
+  _API_PORT: "8888"
+  _NGINX_CONFIG_SECRET: "nginx_config"
+  _ALLOW_UNAUTHENTICATED: "true"
+  _CONTAINER_CONCURRENCY: "4"
+  _REQUEST_TIMEOUT_SECONDS: "300"
+  _MAX_SCALE: "10"
+  _PYTHONPATH: ${PYTHONPATH}:./libs:./queue_processor
+  # These have to be declared in the trigger itself
+  #_MODAL_TOKEN_ID: replace_me
+  #_MODAL_TOKEN_SECRET: replace_me
+  #_CONVEX_HTTP_CLIENT_API_KEY: replace_me
+  #_CLERK_SECRET_KEY: replace_me
+  #_FOLIO_API_KEY: system API key
+  #_RESULT_LIMIT: "3"
+  #_FAL_KEY=replace_me
+  #_REDIS_URL: redis://127.0.0.1:6379/0
+  #_TEST_FOLIO_SHEET_CONFIG: '{}'
+  #_FLOWER_UNAUTHENTICATED_API:
+  #_LIBS_PATH: ./libs
+  #_METRONOME_API_TOKEN:
+  #_ENABLE_BILLING_CHECKS: "false"
+
+tags:
+  - gcp-cloud-build-deploy-cloud-run
+  - gcp-cloud-build-deploy-cloud-run-managed
+  - folio-sheet-server-v2

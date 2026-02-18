@@ -1,0 +1,35 @@
+[MASTER]
+init-hook='import sys; sys.path.append("api"); sys.path.append("libs"); sys.path.append("api/routers");'
+
+[MESSAGES CONTROL]
+# Disable specific checks
+disable=C0111,  # missing-docstring
+        C0103,  # invalid-name
+        C0301,  # line-too-long (covered by black/formatter)
+        W0311,  # bad-indentation (covered by black)
+        R0903,  # too-few-public-methods
+        R0913,  # too-many-arguments
+        W0511,  # fixme (allow TODO comments)
+        W0718,  # broad-exception-caught
+
+        logging-fstring-interpolation,
+        wrong-import-order
+
+[FORMAT]
+# Set the maximum line length
+max-line-length=120
+
+[REPORTS]
+# Set the output format
+output-format=text
+
+# Include a brief explanation of each error
+msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}
+
+# Files or directories to exclude
+ignore=CVS
+
+[TYPECHECK]
+# List of module names for which member attributes should not be checked
+ignored-modules=modal,clerk
+generated-members=modal.*,clerk.*

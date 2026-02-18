@@ -1,0 +1,196 @@
+POST http://localhost:8000/process
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDIyMkFBQSIsImtpZCI6Imluc18yc1hVdmpab2xRYnEyU0FZWENpcWkzVkd4RkUiLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwczovL2xvdmVkLWZlcnJldC05OS5hY2NvdW50cy5kZXYiLCJleHAiOjIwNTUwOTc0NTEsImlhdCI6MTczOTczNzQ1MSwiaXNzIjoiaHR0cHM6Ly9sb3ZlZC1mZXJyZXQtOTkuY2xlcmsuYWNjb3VudHMuZGV2IiwianRpIjoiOTU0MmFhMGY1OWVmYzAxMmQzMmMiLCJuYmYiOjE3Mzk3Mzc0NDYsInN1YiI6InVzZXJfMnN6MFgxc0xQcmthaW50R0RsT25SYnZncnVoIn0.nV5PFuFbUFOlI47DRyg8VMfQaRRJOhqwp6VA15LS7q-jznYLtHx4GQX-DR3UdWq9d15qeAW0Rrjl6cy2FDgOyIE1QFTZHZd5JLGQBUADVrTOr9LukYAYyo4972wgejj-CgDeJyLKvvH_cE5W-gEgR-K9qLLUNKpU1jmti0SnMvVYekFSwvy9CLGTqMlvvDdyfpduIJnEVpknHKQSbLZMcmYXDH80Uu0iXxtfFtAoGWdDHgNclbqTgylJU6U6Gjtzxflvb1-k1iJPVyTeTUvsuDd49kfvfBaGqyWJtaA2_DgQVHNHN80inhqtVdvDm2kBrRIoRS3vgbIx21LVqaTTFA
+
+
+{
+    "convex_project_id": "k175np9fhrknh6w4tdy8h2yk797c9xc8",
+    "convex_column_id": "jd7csmvhkwj5xyekkpfs2dnh7x7c9rtq",
+    "column_name": "rand3",
+    "prompt": {
+        "model": "gpt-4o",
+        "system_prompt": "You are an AI assistant that extracts structured information from text based on a provided JSON schema.",
+        "user_prompt_template": "extract data {{length}}",      
+        "response_format": {
+            "type": "json_schema",
+            "json_schema": {
+            "name": "CallCategoryClassification",
+            "schema": {
+                "title": "S-1 Filing Data Extraction Schema",
+                "type": "object",
+                "properties": {
+                "documentInfo": {
+                    "type": "object",
+                    "properties": {
+                    "documentType": { "type": "string" },
+                    "filingDate": { "type": "string", "format": "date" },
+                    "secFileNumber": { "type": "string" }
+                    }
+                },
+                "companyInfo": {
+                    "type": "object",
+                    "properties": {
+                    "companyName": { "type": "string" },
+                    "proposedTickerSymbol": { "type": "string" },
+                    "industry": { "type": "string" },
+                    "incorporationDate": { "type": "string", "format": "date" },
+                    "fiscalYearEnd": { "type": "string" },
+                    "employeeCount": { "type": "integer" },
+                    "headquarters": { "type": "string" },
+                    "website": { "type": "string" }
+                    }
+                },
+                "offeringDetails": {
+                    "type": "object",
+                    "properties": {
+                    "sharesOffered": { "type": "number" },
+                    "priceRangeMin": { "type": "number" },
+                    "priceRangeMax": { "type": "number" },
+                    "totalOfferingAmount": { "type": "number" },
+                    "underwriters": {
+                        "type": "object",
+                        "properties": {
+                        "leadUnderwriters": { "type": "string" },
+                        "coManagers": { "type": "string" }
+                        }
+                    },
+                    "lockupPeriodDays": { "type": "integer" }
+                    }
+                },
+                "financialHighlights": {
+                    "type": "object",
+                    "properties": {
+                    "annualRevenue": {
+                        "type": "object",
+                        "properties": {
+                        "mostRecentYear": { "type": "number" },
+                        "yearBeforeLast": { "type": "number" },
+                        "twoYearsBeforeLast": { "type": "number" }
+                        }
+                    },
+                    "netIncome": {
+                        "type": "object",
+                        "properties": {
+                        "mostRecentYear": { "type": "number" },
+                        "yearBeforeLast": { "type": "number" },
+                        "twoYearsBeforeLast": { "type": "number" }
+                        }
+                    },
+                    "totalAssets": { "type": "number" },
+                    "totalLiabilities": { "type": "number" },
+                    "cashAndEquivalents": { "type": "number" },
+                    "totalDebt": { "type": "number" }
+                    }
+                },
+                "keyMetrics": {
+                    "type": "object",
+                    "properties": {
+                    "grossMargin": { "type": "number" },
+                    "operatingMargin": { "type": "number" },
+                    "revenueGrowthRate": { "type": "number" },
+                    "customerAcquisitionCost": { "type": "number" },
+                    "lifetimeValue": { "type": "number" },
+                    "activeUsers": { "type": "number" },
+                    "monthlyActiveUsers": { "type": "number" },
+                    "annualRecurringRevenue": { "type": "number" }
+                    }
+                },
+                "riskFactors": {
+                    "type": "object",
+                    "properties": {
+                    "competitiveRisks": { "type": "string" },
+                    "regulatoryRisks": { "type": "string" },
+                    "technologyRisks": { "type": "string" },
+                    "financialRisks": { "type": "string" },
+                    "operationalRisks": { "type": "string" }
+                    }
+                },
+                "useOfProceeds": {
+                    "type": "object",
+                    "properties": {
+                    "researchAndDevelopment": { "type": "number" },
+                    "salesAndMarketing": { "type": "number" },
+                    "generalCorporatePurposes": { "type": "number" },
+                    "debtRepayment": { "type": "number" },
+                    "acquisitions": { "type": "number" }
+                    }
+                },
+                "capitalStructure": {
+                    "type": "object",
+                    "properties": {
+                    "sharesOutstandingPreOffering": { "type": "number" },
+                    "sharesOutstandingPostOffering": { "type": "number" },
+                    "sharesOfferedByCompany": { "type": "number" },
+                    "sharesOfferedBySellingStockholders": { "type": "number" },
+                    "overallotmentOption": { "type": "number" }
+                    }
+                },
+                "managementTeam": {
+                    "type": "object",
+                    "properties": {
+                    "ceo": {
+                        "type": "object",
+                        "properties": {
+                        "name": { "type": "string" },
+                        "age": { "type": "integer" },
+                        "compensationLastYear": { "type": "number" }
+                        }
+                    },
+                    "cfo": {
+                        "type": "object",
+                        "properties": {
+                        "name": { "type": "string" },
+                        "age": { "type": "integer" },
+                        "compensationLastYear": { "type": "number" }
+                        }
+                    },
+                    "cto": {
+                        "type": "object",
+                        "properties": {
+                        "name": { "type": "string" },
+                        "age": { "type": "integer" },
+                        "compensationLastYear": { "type": "number" }
+                        }
+                    }
+                    }
+                },
+                "businessDescription": {
+                    "type": "object",
+                    "properties": {
+                    "businessOverview": { "type": "string" },
+                    "productsAndServices": { "type": "string" },
+                    "businessModel": { "type": "string" },
+                    "growthStrategy": { "type": "string" },
+                    "competitiveAdvantages": { "type": "string" }
+                    }
+                },
+                "marketOpportunity": {
+                    "type": "object",
+                    "properties": {
+                    "targetMarketSize": { "type": "number" },
+                    "marketGrowthRate": { "type": "number" },
+                    "marketTrends": { "type": "string" }
+                    }
+                },
+                "intellectualProperty": {
+                    "type": "object",
+                    "properties": {
+                    "patentCount": { "type": "integer" },
+                    "trademarkCount": { "type": "integer" },
+                    "keyPatents": { "type": "string" }
+                    }
+                }
+                },
+                "additionalProperties": false
+            }
+            }
+        
+        },
+        "extraction_keyword": "extraction_keyword"
+    },
+    "sql_condition": "agent != '1'",
+    "callback_url": "https://quick-butterfly-506.convex.site",
+    "output_name": "extraction_keyword",
+    "prompt_input_columns": ["length"]
+}
+
+

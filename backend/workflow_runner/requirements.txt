@@ -1,0 +1,4 @@
+prefect-client
+tenacity
+-e libs/folio/utils/workflow_tools
+-e libs/folio/utils/shared_types

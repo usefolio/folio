@@ -1,0 +1,618 @@
+{
+  "workflow_id": "1",
+  "name": "Auto-Generated Workflow",
+  "description": "Parsed from input source",
+  "steps": [
+    {
+      "id": "34e61f74-83de-49e4-b9dc-6fc4e956de02",
+      "action": "create_view",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_sheet_id": "jd7bczmvaqt9r3h3va0c247fjh7gkk21",
+        "sql_filter": "1=1",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "create_view step",
+      "description": "Parsed from input source (request #1)",
+      "depends_on": []
+    },
+    {
+      "id": "2346ae04-6b56-4b37-b27b-e45f2bf145fc",
+      "action": "process",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_column_id": "j571j566zsjtjh6z6ds6axxybx7gkxvq",
+        "column_name": "industry_type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "system_prompt": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. ",
+          "user_prompt_template": "can you classify the following website into one of the buckets?\n\n{{Domain}}",
+          "response_format": {
+            "type": "json_schema",
+            "json_schema": {
+              "name": "Classification",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "extraction_keyword": {
+                    "type": "string",
+                    "enum": [
+                      "ecommerce",
+                      "finance",
+                      "manufacturing",
+                      "non-profit",
+                      "other",
+                      "restaurant",
+                      "education",
+                      "technology",
+                      "healthcare"
+                    ]
+                  }
+                },
+                "required": [
+                  "extraction_keyword"
+                ]
+              }
+            }
+          }
+        },
+        "sql_condition": "1=1",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "Domain"
+        ],
+        "workflow_id": "1",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "process step",
+      "description": "Parsed from input source (request #2)",
+      "depends_on": []
+    },
+    {
+      "id": "9307540f-0eec-41e1-9140-43ebf463b2f4",
+      "action": "process",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_column_id": "j5767kx2fm70xztr06fakjkrf97gkzvd",
+        "column_name": "support_page_url",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "can you go to {{Domain}} and find the url of the support page ? only return the link to the support page."
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "1=1",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "Domain"
+        ],
+        "workflow_id": "1",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "process step",
+      "description": "Parsed from input source (request #3)",
+      "depends_on": []
+    },
+    {
+      "id": "3b3e91ce-e935-4f75-a401-50010e6136ba",
+      "action": "create_view",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_sheet_id": "jd77531w9kjvdks62sjqnfd72x7gkfvy",
+        "sql_filter": "\"industry_type\" LIKE '%ecommerce%'",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "create_view step",
+      "description": "Parsed from input source (request #4)",
+      "depends_on": []
+    },
+    {
+      "id": "d210248c-d57c-483d-a64d-23dfbe257751",
+      "action": "process",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_column_id": "j572ms86vf4xn4xmmcm0kkhjrs7gjav7",
+        "column_name": "ecommerce_kind",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}}  is {{Domain}}  in ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%ecommerce%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "1",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "process step",
+      "description": "Parsed from input source (request #5)",
+      "depends_on": []
+    },
+    {
+      "id": "a6408a45-387f-4cd3-ae83-b952e31d9d32",
+      "action": "create_view",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_sheet_id": "jd7387x5gkykhws7pttmvmwvxn7gj5yt",
+        "sql_filter": "\"industry_type\" LIKE '%finance%'",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "create_view step",
+      "description": "Parsed from input source (request #6)",
+      "depends_on": []
+    },
+    {
+      "id": "5e9ee916-27d2-4be1-bbad-c25b70de7cb2",
+      "action": "process",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_column_id": "j5763nkbnpj7zwdq529hrbrxbs7gkmn8",
+        "column_name": "finance_type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ? "
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%finance%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "1",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "process step",
+      "description": "Parsed from input source (request #7)",
+      "depends_on": []
+    },
+    {
+      "id": "474f4373-b35b-4e77-a16b-4d5e7244ae57",
+      "action": "create_view",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_sheet_id": "jd75eak5w9xekbzbrb0zymm4rd7gj699",
+        "sql_filter": "\"industry_type\" LIKE '%manufacturing%'",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "create_view step",
+      "description": "Parsed from input source (request #8)",
+      "depends_on": []
+    },
+    {
+      "id": "25dab2c5-4043-4f79-ae7e-5dd19279c116",
+      "action": "process",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_column_id": "j57faky50mnfddfvpm9n8esxvx7gk22b",
+        "column_name": "manufacturing_type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%manufacturing%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "1",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "process step",
+      "description": "Parsed from input source (request #9)",
+      "depends_on": []
+    },
+    {
+      "id": "72ed8acb-39de-4aa6-963b-27ccc9c1ca84",
+      "action": "create_view",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_sheet_id": "jd7fd3t5jxjvm9cmf4nqrh68js7gjd6g",
+        "sql_filter": "\"industry_type\" LIKE '%non-profit%'",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "create_view step",
+      "description": "Parsed from input source (request #10)",
+      "depends_on": []
+    },
+    {
+      "id": "93a88017-ae7b-44f4-ac41-2c0b51420f9f",
+      "action": "process",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_column_id": "j573xnkjxcj7dy0m1ymb6rfvh97gk7kk",
+        "column_name": "nonprofit-type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%non-profit%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "1",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "process step",
+      "description": "Parsed from input source (request #11)",
+      "depends_on": []
+    },
+    {
+      "id": "cc46c424-5376-4753-a876-8a069c3eaa9e",
+      "action": "create_view",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_sheet_id": "jd77dzp9qx7vh53q07wp7cnmf97gk14j",
+        "sql_filter": "\"industry_type\" LIKE '%other%'",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "create_view step",
+      "description": "Parsed from input source (request #12)",
+      "depends_on": []
+    },
+    {
+      "id": "3379d69d-f16c-44ff-9929-7057507ec3f0",
+      "action": "process",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_column_id": "j576510jjc3vmrr3jdrdd3tqgh7gjb00",
+        "column_name": "other-type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%other%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "1",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "process step",
+      "description": "Parsed from input source (request #13)",
+      "depends_on": []
+    },
+    {
+      "id": "09bbee16-827d-40bd-86ab-d4c927e522f9",
+      "action": "create_view",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_sheet_id": "jd70t4p7yfjhr2ad22ebp0mgw97gjh2q",
+        "sql_filter": "\"industry_type\" LIKE '%restaurant%'",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "create_view step",
+      "description": "Parsed from input source (request #14)",
+      "depends_on": []
+    },
+    {
+      "id": "a84445a4-0fb4-421c-8222-8aa002aa3ef0",
+      "action": "process",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_column_id": "j57fjb66e1925qrptr5p2dk3cs7gjf48",
+        "column_name": "restaurant-type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%restaurant%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "1",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "process step",
+      "description": "Parsed from input source (request #15)",
+      "depends_on": []
+    },
+    {
+      "id": "189a520a-b259-4e60-b672-6d1de87dfb41",
+      "action": "create_view",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_sheet_id": "jd7eyzpxqr5ggpyae01av4y9657gj9ff",
+        "sql_filter": "\"industry_type\" LIKE '%education%'",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "create_view step",
+      "description": "Parsed from input source (request #16)",
+      "depends_on": []
+    },
+    {
+      "id": "46a87b02-9e4c-4866-b512-f637b4c5d2d8",
+      "action": "process",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_column_id": "j57556cjwqwn24ejjw4fnyz1a17gk2rn",
+        "column_name": "education-type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%education%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "1",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "process step",
+      "description": "Parsed from input source (request #17)",
+      "depends_on": []
+    },
+    {
+      "id": "3b219b9b-4f31-4405-b6e7-1f656250c588",
+      "action": "create_view",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_sheet_id": "jd74yj3xbf1jdrn12mmsqp2jnx7gkhg1",
+        "sql_filter": "\"industry_type\" LIKE '%technology%'",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "create_view step",
+      "description": "Parsed from input source (request #18)",
+      "depends_on": []
+    },
+    {
+      "id": "f9958db9-83ef-4b9e-80fe-62276f192ce1",
+      "action": "process",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_column_id": "j57be0m65qyn2he7bkerxrgbv17gk2cq",
+        "column_name": "techonlogy-type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%technology%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "1",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "process step",
+      "description": "Parsed from input source (request #19)",
+      "depends_on": []
+    },
+    {
+      "id": "da3e97f7-838b-4091-b797-6ba36b6c8ca0",
+      "action": "create_view",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_sheet_id": "jd70eb02y5h1yp61heapwgw81n7gjqt3",
+        "sql_filter": "\"industry_type\" LIKE '%healthcare%'",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "create_view step",
+      "description": "Parsed from input source (request #20)",
+      "depends_on": []
+    },
+    {
+      "id": "45393c79-7a34-4862-bc70-df0dd7a33672",
+      "action": "process",
+      "payload": {
+        "convex_project_id": "jn727dx150syh2qd7bprvk3zan7ghgxj",
+        "convex_column_id": "j576a0m5dqjdaatbkzyqjvtra97gkvd6",
+        "column_name": "healthcare-type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%healthcare%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "1",
+        "callback_url": "https://adamant-dachshund-473.convex.site"
+      },
+      "title": "process step",
+      "description": "Parsed from input source (request #21)",
+      "depends_on": []
+    }
+  ]
+}

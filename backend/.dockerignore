@@ -1,0 +1,45 @@
+# VCS and editor metadata
+.git
+.github
+.vscode
+.claude
+
+# Python caches and virtual envs
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage/
+venv/
+test-venv/
+
+# Node artifacts
+**/node_modules/
+
+# Local runtime artifacts and large local data
+local_tmp/
+dump.rdb
+
+# Build/test-only directories
+integ_tests/
+workflow_runner/
+cookiecutter_lib/
+metadata/
+usage_events/
+billing_info/
+scrape_event/
+workflow/
+
+# Environment files and local secrets
+.env
+.env.*
+**/.env
+**/.env.*
+
+# macOS/filesystem noise
+.DS_Store

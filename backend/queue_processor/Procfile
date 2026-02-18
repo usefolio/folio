@@ -1,0 +1,2 @@
+web: celery -A bg_tasks:celery_app worker -Q celery --concurrency=2 --prefetch-multiplier=1 --max-tasks-per-child=100
+flower: celery -A bg_tasks:celery_app flower --broker=${REDIS_URL:-redis://localhost:6379/0} --url-prefix=/yourpath

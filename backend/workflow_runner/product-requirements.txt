@@ -1,0 +1,73 @@
+Below is a high-level set of product (functional) requirements for the module discussed throughout the conversation. These requirements focus on what the module must do, how it behaves, and the constraints or validations it must enforce. It does not list Python library dependencies (like Pydantic or Jinja2); rather, it summarizes the product functionality that the final solution should provide.
+
+1. Workflow Parsing & Modeling - Parse HTTP File into Workflow
+Requirement: The system can read an .http file (e.g. all.http) containing multiple POST requests to /create_view or /process. The .http file must be created/provided by the caller.
+Requirement: Each POST block must be extracted as a JSON object. For right now  it is assumed that its only /create_view and /process.
+Requirement: The module must convert each create_view JSON into a ViewCreationRequest object, and each process JSON into a ProcessRequest object.
+Requirement: These request objects are then wrapped as steps (WorkflowStepWithLiteralStrings) and assembled into a WorkflowTemplateWithLiteralStrings.
+
+2. Workflow Types
+Requirement: There are two distinct “types” (or classes) of workflow templates:
+1. WorkflowTemplateWithLiteralStrings – All fields are literal strings. This is basically just the path and the body of an http request.
+2. WorkflowTemplateWithPlaceholderRef - This is the same as 1 BUT with a very important distinction. Certain fields, like convex_project_id, convex_sheet_id, convex_column_id become injectable properties.
+These placeholders can be used to make an almost identical request but with different values. This is useful for creating multiple views or processes with the same structure but different project, sheet or column id.
+
+
+3. Schema Validation
+Requirement: The module must validate that a step claiming to be create_view indeed contains a valid ViewCreationRequest or ViewCreationRequestWithPlaceholderRef, and similarly for process steps.
+Requirement: If validation fails, an error is raised (e.g. ValueError or ValidationError).
+
+4. Conversions Between Workflow Types (ie Literal → Placeholder or Placeholder → Literal) 
+Requirement: Provide a function (e.g. convert_literal_to_placeholder_wf) that takes a WorkflowTemplateWithLiteralStrings and returns a WorkflowTemplateWithPlaceholderRef.
+Requirement: The function must only replace certain fields (e.g., convex_project_id, convex_sheet_id, convex_column_id) with a Jinja-style {{ field_name }} placeholder. Other fields remain literal strings.
+Requirement: The resulting placeholder workflow must still pass validation of WorkflowTemplateWithPlaceholderRef.
+Requirement: Provide a function (e.g. convert_placeholder_wf_to_literal) that takes a WorkflowTemplateWithPlaceholderRef plus a dictionary of substitutions (like {"convex_project_id": "abc123"}) and returns a WorkflowTemplateWithLiteralStrings.
+Requirement: During conversion, any placeholder references (e.g. PlaceholderRef(placeholder_name="convex_column_id") or {{ convex_column_id }}) are replaced with the corresponding literal string.
+Requirement: If a placeholder exists that is not in the substitutions dict, the function must raise an error (ensuring no unexpected placeholders remain).
+Requirement: The final output passes validation of WorkflowTemplateWithLiteralStrings.
+
+5. Templating & Jinja2
+Jinja Integration
+Requirement: The system must allow fields containing placeholders (e.g., {{ convex_project_id }}) to be resolved via Jinja2 or a similar templating engine.
+Requirement: When placeholders are rendered, the final string is inserted into the corresponding field in the final “literal” model.
+Serialization of Placeholders
+Requirement: In the placeholder model, fields typed as PlaceholderRef must serialize to a string of the form "{{ placeholder_name }}" when dumping to JSON, rather than a nested JSON object.
+Requirement: Overriding the default Pydantic serialization is acceptable to ensure the final JSON shows e.g. "convex_column_id": "{{ convex_column_id }}".
+Strict Fields
+Requirement: Only certain fields (convex_project_id, convex_sheet_id, convex_column_id) are allowed to have placeholders. All other fields remain literal strings (unless explicitly expanded in future).
+
+6. JSON Import/Export
+Saving Workflow to JSON
+Requirement: The system can serialize either WorkflowTemplateWithLiteralStrings or WorkflowTemplateWithPlaceholderRef to JSON.
+Requirement: The final JSON must be valid; if not, an error is raised.
+Loading Workflow from JSON
+Requirement: The system can load a JSON file into either WorkflowTemplateWithLiteralStrings or WorkflowTemplateWithPlaceholderRef, as specified by the caller.
+Requirement: If the JSON does not match the expected model, an error is raised.
+Round-Trip
+Requirement: The system allows a round-trip: parse .http → literal workflow → JSON → load from JSON → placeholder workflow → JSON → load from JSON → final substitution → final JSON.
+
+7. Execution Integration
+Prefect Integration
+Requirement: The final “literal” workflow (with real IDs) must be suitable for actual calls to the create_view or process endpoints in the application.
+Requirement: In practice, users can pass the WorkflowTemplateWithPlaceholderRef to a Prefect flow, which resolves placeholders at runtime, returning a fully literal workflow to call Folio endpoints.
+Convex Resource Creation (Optional, described in the conversation)
+Requirement: Before calling create_view or process in the Folio system, the user might also need to create corresponding resources in “Convex” (e.g., a new sheet or column) and then inject the resulting IDs as placeholders.
+Requirement: The workflow system should not block that approach; it’s up to the runtime orchestrator (e.g. Prefect) to orchestrate these steps.
+
+8. Validation & Error Conditions
+Missing Fields
+Requirement: If a create_view step lacks mandatory fields (e.g., convex_project_id), the system must reject it with a validation error.
+Unknown Placeholders
+Requirement: If placeholders appear for fields that are not whitelisted (like sql_filter) or if placeholders are not found in the user-supplied substitution dictionary, an error should be raised.
+Type Mismatch
+Requirement: If the user tries to parse a WorkflowTemplateWithPlaceholderRef from a JSON that’s actually shaped for WorkflowTemplateWithLiteralStrings (or vice versa), the system must raise a validation error.
+
+9. Final Thoughts
+These requirements capture the primary goals and constraints described in the conversation. They ensure:
+
+Parsing from .http → literal models
+Two distinct workflow states (literal vs. placeholder)
+Conversion between them with strict validation and a small set of placeholder fields
+Serialization/deserialization to JSON with user-friendly double-brace placeholder notation
+Execution or integration with a workflow orchestrator like Prefect.
+Hence, the module satisfies both the business logic of multi-step workflow definitions (create_view/process) and the “parameterization” logic (placeholders for certain fields, resolved at runtime).

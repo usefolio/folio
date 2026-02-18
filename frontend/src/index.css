@@ -1,0 +1,200 @@
+@import url("non.geist");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  font-family: "Geist Variable", Arial, Helvetica, sans-serif !important;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 25 100% 50%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 31 100% 95%;
+    --accent-foreground: 25 100% 50%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+    /* Sidebar variables */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 25 100% 50%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 25 100% 50%;
+    --accent-foreground: 31 100% 95%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    /* Sidebar variables */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 240 5.9% 10%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+/* For Layout */
+.screenSizeLayout {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Audio player knob appearance cross-browser compatible */
+/* Custom Thumb for Webkit */
+#audio-player input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: hsl(var(--primary));
+  border-radius: 0%;
+  transition: background 0.2s ease-in-out;
+  border: 1px solid white;
+  backdrop-filter: blur(1px);
+}
+/* Custom Thumb for Firefox */
+#audio-player input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  appearance: none;
+  height: 14px;
+  background: hsl(var(--primary));
+  transition: background 0.2s ease-in-out;
+  border: 1px solid white;
+  border-radius: 0%;
+  backdrop-filter: blur(1px);
+}
+
+#audio-player input[type="range"]::-moz-range-thumb:hover {
+  background: hsl(var(--primary) / 0.8); /* Tailwind blue-600 */
+}
+
+/* Custom Thumb for Microsoft Edge */
+#audio-player input[type="range"]::-ms-thumb {
+  width: 14px;
+  height: 14px;
+  background: hsl(var(--primary)); /* Tailwind blue-500 */
+  border-radius: 0%;
+  border: none;
+  transition: background 0.2s ease-in-out;
+  border: 1px solid white;
+  backdrop-filter: blur(1px);
+}
+
+#audio-player input[type="range"]::-ms-thumb:hover {
+  background: hsl(var(--primary) / 0.8); /* Tailwind blue-600 */
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+.grid-container::-webkit-scrollbar {
+  display: none;
+}
+.grid-container {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+#tagTextArea::-webkit-scrollbar {
+  display: none;
+}
+#tagTextArea {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/*
+  Spinner stability fixes
+  - Ensure SVG-based spinners (e.g., lucide-react Loader2 with Tailwind's animate-spin)
+    rotate around their visual center to avoid subtle vertical wobble.
+  - Hint the browser to optimize for transform animations to reduce jitter.
+*/
+svg.animate-spin {
+  transform-origin: center;
+  will-change: transform;
+}

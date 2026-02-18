@@ -1,0 +1,41 @@
+name: Pause-Resume Flow Deployment
+flow_name: pause_resume_demo
+work_pool:
+  name: default-work-pool
+  work_queue_name: default
+deployments:
+  - name: workflow_processing_worker
+    parameters:
+      template_path: "./sample-2.json"
+      base_url: "http://127.0.0.1:8000"
+      #user_id: ""
+      #ile_path: "gtm.csv"
+      workflow_type: "literal"   
+    enforce_parameter_schema: true
+    version:
+    tags: []
+    concurrency_limit:
+    description:
+    entrypoint: test_flow.py:data_processing_workflow
+    work_pool:
+      name: default-work-pool
+      work_queue_name:
+      job_variables:
+        env: {}
+    schedules: []
+    pull:
+      - prefect.deployments.steps.run_shell_script:
+          id: get-github-token
+          script: uv tool run prefect-cloud github token usefolio/folio
+      - prefect.deployments.steps.git_clone:
+          id: git-clone
+          branch: dev
+          repository: https://x-access-token:{{ get-github-token.stdout }}@github.com/usefolio/folio.git
+      - prefect.deployments.steps.set_working_directory:
+          directory: "{{ git-clone.directory }}/backend/workflow_runner"
+      - prefect.deployments.steps.run_shell_script:
+          id: install-workflow-deps
+          script: |
+            python -m pip install --upgrade pip
+            python -m pip install tenacity httpx prefect-client
+            ln -sfn ../libs/folio ./folio

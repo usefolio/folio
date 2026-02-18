@@ -1,0 +1,33 @@
+FROM python:3.11-slim
+
+# Set work directory
+WORKDIR /app
+
+# Copy and prepare api directory structure like cloud build
+COPY libs ./api/libs
+COPY queue_processor ./api/queue_processor
+COPY api ./api
+
+# Change to api directory to run pip install (where libs are)
+WORKDIR /app/api
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Set final working directory and copy everything to /app
+WORKDIR /app
+RUN cp -r api/* . && rm -rf api
+
+# Set PYTHONPATH so that libs and queue_processor are importable
+ENV PYTHONPATH="/app/libs:/app/queue_processor"
+
+# Create directories needed by the application
+RUN mkdir -p ../local_tmp
+RUN mkdir -p /mnt/tmp
+
+# Expose port for the FastAPI app
+EXPOSE 8000
+
+# Create combined Procfile for both services
+COPY Procfile.combined /app/Procfile
+
+# Start both API and queue processor using honcho
+CMD ["honcho", "start"]

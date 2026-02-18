@@ -1,0 +1,61 @@
+{
+  "requests": [
+    {
+      "timestamp": "2025-04-04T20:14:49.496952+00:00",
+      "path": "/create_view",
+      "request_data": {
+        "convex_project_id": "k1749ec6d4em8ykcn1417d96057dc75p",
+        "convex_sheet_id": "jn7ejsm28t95pc4m65xkh550kx7dd1ms",
+        "sql_filter": "1=1",
+        "callback_url": "https://rapid-egret-993.convex.site"
+      }
+    },
+    {
+      "timestamp": "2025-04-04T20:16:32.160645+00:00",
+      "path": "/process",
+      "request_data": {
+        "convex_project_id": "k1749ec6d4em8ykcn1417d96057dc75p",
+        "convex_column_id": "jd78ntgemf1ttvzmdtf406w7nd7dd5nt",
+        "column_name": "tag",
+        "prompt": {
+          "model": "gpt-4o",
+          "system_prompt": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. ",
+          "user_prompt_template": "please assign the most appopriate tag to {{content}}",
+          "response_format": {
+            "type": "json_schema",
+            "json_schema": {
+              "name": "Classification",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "extraction_keyword": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "invoice",
+                        "other",
+                        "quote",
+                        "resume"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "extraction_keyword"
+                ]
+              }
+            }
+          }
+        },
+        "sql_condition": "1=1",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "content"
+        ],
+        "workflow_id": null,
+        "callback_url": "https://rapid-egret-993.convex.site"
+      }
+    }
+  ]
+}

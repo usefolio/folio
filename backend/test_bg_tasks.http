@@ -1,0 +1,6 @@
+GET http://localhost:8000/asset_storage/download_url
+Content-Type: application/json
+
+{
+    "filename": "requirements.txt"
+}

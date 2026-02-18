@@ -1,0 +1,491 @@
+{
+    "requests": [
+        {
+            "timestamp": "2025-05-26T22:56:59.866Z",
+            "path": "/create_view",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_sheet_id": "jn70gk4mfnz6k5jkxcvex2qyvd7gnrw8",
+                "sql_filter": "1=1",
+                "callback_url": "https://rapid-egret-993.convex.site"
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/process",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_column_id": "jd7ft0bb8j84a84be0naychvqh7gnp8d",
+                "column_name": "industry",
+                "sql_condition": "1=1",
+                "output_name": "extraction_keyword",
+                "prompt_input_columns": [
+                    "Domain"
+                ],
+                "workflow_id": null,
+                "api_keys": {},
+                "callback_url": "https://rapid-egret-993.convex.site",
+                "extraction_keyword": "extraction_keyword",
+                "prompt": {
+                    "model": "gpt-4.1",
+                    "system_prompt": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. ",
+                    "user_prompt_template": "please take a look at the {{Domain}} and tell me what industry its part of",
+                    "response_format": {
+                        "type": "json_schema",
+                        "json_schema": {
+                            "name": "Classification",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "extraction_keyword": {
+                                        "type": "string",
+                                        "enum": [
+                                            "ecommerce",
+                                            "finance",
+                                            "manufacturing",
+                                            "non-profit",
+                                            "other",
+                                            "restaurant",
+                                            "education",
+                                            "technology",
+                                            "healthcare"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "extraction_keyword"
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/create_view",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_sheet_id": "jn79e7qj02hnxwzsmg7k4s7qb97gmthy",
+                "sql_filter": "\"industry\" LIKE '%ecommerce%'",
+                "callback_url": "https://rapid-egret-993.convex.site"
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/process",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_column_id": "jd7aaank49ccxzjqhkfdrrh09n7gmvjp",
+                "column_name": "ecomm_type",
+                "sql_condition": "\"industry\" LIKE '%ecommerce%'",
+                "output_name": "extraction_keyword",
+                "prompt_input_columns": [
+                    "industry",
+                    "Domain"
+                ],
+                "workflow_id": null,
+                "api_keys": {},
+                "callback_url": "https://rapid-egret-993.convex.site",
+                "extraction_keyword": "extraction_keyword",
+                "prompt": {
+                    "model": "gpt-4.1",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                                }
+                            ]
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "what specific type of {{industry}} is this domain: {{Domain}}  in ? "
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/create_view",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_sheet_id": "jn79z0v3hrxnj4zh8pvx0c694d7gnkz1",
+                "sql_filter": "\"industry\" LIKE '%finance%'",
+                "callback_url": "https://rapid-egret-993.convex.site"
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/process",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_column_id": "jd79q9jn1yqbyv19q8wy4kfjks7gn4yk",
+                "column_name": "fin_type",
+                "sql_condition": "\"industry\" LIKE '%finance%'",
+                "output_name": "extraction_keyword",
+                "prompt_input_columns": [
+                    "industry",
+                    "Domain"
+                ],
+                "workflow_id": null,
+                "api_keys": {},
+                "callback_url": "https://rapid-egret-993.convex.site",
+                "extraction_keyword": "extraction_keyword",
+                "prompt": {
+                    "model": "gpt-4.1",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                                }
+                            ]
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "what specific type of {{industry}} is this domain: {{Domain}}  in ? "
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/create_view",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_sheet_id": "jn72g07gd42423fdh9pqez5yjs7gmejj",
+                "sql_filter": "\"industry\" LIKE '%manufacturing%'",
+                "callback_url": "https://rapid-egret-993.convex.site"
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/process",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_column_id": "jd775vtryxezg5awm22cxejha17gnz80",
+                "column_name": "manuf_type",
+                "sql_condition": "\"industry\" LIKE '%manufacturing%'",
+                "output_name": "extraction_keyword",
+                "prompt_input_columns": [
+                    "industry",
+                    "Domain"
+                ],
+                "workflow_id": null,
+                "api_keys": {},
+                "callback_url": "https://rapid-egret-993.convex.site",
+                "extraction_keyword": "extraction_keyword",
+                "prompt": {
+                    "model": "gpt-4.1",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                                }
+                            ]
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "what specific type of {{industry}} is this domain: {{Domain}}  in ? "
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/create_view",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_sheet_id": "jn7e9dm1v8dyfj1d7d1rdvvrk57gmb0q",
+                "sql_filter": "\"industry\" LIKE '%non-profit%'",
+                "callback_url": "https://rapid-egret-993.convex.site"
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/process",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_column_id": "jd7f2ans3sbgaf45115mc0n73s7gnacq",
+                "column_name": "non-profit_type",
+                "sql_condition": "\"industry\" LIKE '%non-profit%'",
+                "output_name": "extraction_keyword",
+                "prompt_input_columns": [
+                    "industry",
+                    "Domain"
+                ],
+                "workflow_id": null,
+                "api_keys": {},
+                "callback_url": "https://rapid-egret-993.convex.site",
+                "extraction_keyword": "extraction_keyword",
+                "prompt": {
+                    "model": "gpt-4.1",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                                }
+                            ]
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "what specific type of {{industry}} is this domain: {{Domain}}  in ? "
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/create_view",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_sheet_id": "jn72ex0shpg4ebtxcc4k8fgnrx7gnah9",
+                "sql_filter": "\"industry\" LIKE '%other%'",
+                "callback_url": "https://rapid-egret-993.convex.site"
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/create_view",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_sheet_id": "jn77wr9kc9rwhzaxymjdb5vp1d7gmj9w",
+                "sql_filter": "\"industry\" LIKE '%restaurant%'",
+                "callback_url": "https://rapid-egret-993.convex.site"
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/process",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_column_id": "jd77y8dz7gefcd5vxn53sxecrh7gnkh1",
+                "column_name": "resto_type",
+                "sql_condition": "\"industry\" LIKE '%restaurant%'",
+                "output_name": "extraction_keyword",
+                "prompt_input_columns": [
+                    "industry",
+                    "Domain"
+                ],
+                "workflow_id": null,
+                "api_keys": {},
+                "callback_url": "https://rapid-egret-993.convex.site",
+                "extraction_keyword": "extraction_keyword",
+                "prompt": {
+                    "model": "gpt-4.1",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                                }
+                            ]
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "what specific type of {{industry}} is this domain: {{Domain}}  in ? "
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/create_view",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_sheet_id": "jn73e2mgq8bqsa8sw29x5ycj897gmbk7",
+                "sql_filter": "\"industry\" LIKE '%education%'",
+                "callback_url": "https://rapid-egret-993.convex.site"
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/process",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_column_id": "jd7f3bdgwwfytx9ajsn23y0k497gmt2f",
+                "column_name": "edu_type",
+                "sql_condition": "\"industry\" LIKE '%education%'",
+                "output_name": "extraction_keyword",
+                "prompt_input_columns": [
+                    "industry",
+                    "Domain"
+                ],
+                "workflow_id": null,
+                "api_keys": {},
+                "callback_url": "https://rapid-egret-993.convex.site",
+                "extraction_keyword": "extraction_keyword",
+                "prompt": {
+                    "model": "gpt-4.1",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                                }
+                            ]
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "what specific type of {{industry}} is this domain: {{Domain}}  in ? "
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/create_view",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_sheet_id": "jn7cwyyvxh1f2n23h6tvwpn7k57gnb29",
+                "sql_filter": "\"industry\" LIKE '%technology%'",
+                "callback_url": "https://rapid-egret-993.convex.site"
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/process",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_column_id": "jd7fgryws0pq7m8whvmc7035457gm1dd",
+                "column_name": "tech_type",
+                "sql_condition": "\"industry\" LIKE '%technology%'",
+                "output_name": "extraction_keyword",
+                "prompt_input_columns": [
+                    "industry",
+                    "Domain"
+                ],
+                "workflow_id": null,
+                "api_keys": {},
+                "callback_url": "https://rapid-egret-993.convex.site",
+                "extraction_keyword": "extraction_keyword",
+                "prompt": {
+                    "model": "gpt-4.1",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                                }
+                            ]
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "what specific type of {{industry}} is this domain: {{Domain}}  in ? "
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/create_view",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_sheet_id": "jn73sqqx12cpk2bt56hv0avqvh7gmpp7",
+                "sql_filter": "\"industry\" LIKE '%healthcare%'",
+                "callback_url": "https://rapid-egret-993.convex.site"
+            }
+        },
+        {
+            "timestamp": "2025-05-26T22:56:59.867Z",
+            "path": "/process",
+            "request_data": {
+                "convex_project_id": "k175ff9g7p8d29c8kch6hx0ajd7gn14j",
+                "convex_column_id": "jd76xf9kqbdshqqfw7fxe9bek97gmnn4",
+                "column_name": "healthcare_type",
+                "sql_condition": "\"industry\" LIKE '%healthcare%'",
+                "output_name": "extraction_keyword",
+                "prompt_input_columns": [
+                    "industry",
+                    "Domain"
+                ],
+                "workflow_id": null,
+                "api_keys": {},
+                "callback_url": "https://rapid-egret-993.convex.site",
+                "extraction_keyword": "extraction_keyword",
+                "prompt": {
+                    "model": "gpt-4.1",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                                }
+                            ]
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "what specific type of {{industry}} is this domain: {{Domain}}  in ? "
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

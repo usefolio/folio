@@ -1,0 +1,8 @@
+POST http://localhost:8000/create_view
+Content-Type: application/json
+
+{
+    "convex_project_id": "k17dpgng38gjxqs03ajy73d26s769n2a",
+    "convex_sheet_id": "jn749vvxa684fkekw90xch6x6d76aptk",
+    "sql_filter": "date='2024-12-01'"
+}

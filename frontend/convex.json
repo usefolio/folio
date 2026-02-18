@@ -1,0 +1,10 @@
+{
+  "node": {
+    "externalPackages": [
+      "libsodium-wrappers-sumo"
+    ]
+  },
+  "typecheck": {
+    "project": "tsconfig.convex.json"
+  }
+}

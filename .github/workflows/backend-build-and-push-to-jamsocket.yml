@@ -1,0 +1,92 @@
+# .github/workflows/deploy.yml
+name: Build & Deploy to Jamsocket (dev / prod)
+
+on:
+  # The Jamsocket deploy step is disabled; only allow manual runs for now
+  # push:
+  #   branches: [ dev, main ]        # dev → “dev” environment, main → “production”
+  workflow_dispatch:
+
+env:                               # identical for both builds
+  PYTHONPATH: "/workspace:/workspace/libs:/workspace/queue_processor"   # non-secret
+
+jobs:
+# ─────────────────────────────────────────────────────────────────────────────
+# SINGLE JOB: builds an image with secrets baked in and pushes it
+# ─────────────────────────────────────────────────────────────────────────────
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    # pick the GitHub environment to pull secrets from
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'dev' }}
+
+    # branch-dependent shorthand variables
+    env:
+      ENVIRONMENT:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+      SERVICE_NAME: ${{ github.ref == 'refs/heads/main'
+                         && 'folio-sheet-prod-jamsocket'
+                         || 'folio-sheet-dev-jamsocket' }}
+      IMAGE_TAG:    ${{ github.sha }}
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Install the Pack CLI (official action)
+      - uses: buildpacks/github-actions/setup-pack@v5.8.10
+        with:
+          pack-version: '0.36.0'            # pin exact CLI version
+
+      # Node is needed only for the jamsocket CLI
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+
+      # Copy libs / queue_processor into ./api  (same as your Cloud Build step)
+      - name: Stage libs & queue_processor
+        run: |
+          rm -rf ./api/libs ./api/queue_processor || true
+          cp -R libs            ./api/libs
+          cp -R queue_processor ./api/queue_processor
+
+      # Build image and embed **all** env-vars safely
+      - name: Build image with secrets baked in
+        env:                       #   ← values come from the selected environment
+          # ------ secrets -------
+          CLERK_SECRET_KEY:             ${{ secrets.CLERK_SECRET_KEY }}
+          MODAL_TOKEN_ID:               ${{ secrets.MODAL_TOKEN_ID }}
+          MODAL_TOKEN_SECRET:           ${{ secrets.MODAL_TOKEN_SECRET }}
+          CONVEX_HTTP_CLIENT_API_KEY:   ${{ secrets.CONVEX_HTTP_CLIENT_API_KEY }}
+          FAL_KEY:                      ${{ secrets.FAL_KEY }}
+          TEST_FOLIO_SHEET_CONFIG:       ${{ secrets.TEST_FOLIO_SHEET_CONFIG }}
+          REDIS_URL:                    ${{ secrets.REDIS_URL }}
+          BUCKET_NAME:                  ${{ secrets.BUCKET_NAME }}
+          RESULT_LIMIT:                 ${{ secrets.RESULT_LIMIT }}
+          # ------ non-secrets ----
+          PYTHONPATH: ${{ env.PYTHONPATH }}
+        run: |
+          # Each "--env VAR=$VAR" copies the already-exported value into the image.
+          pack build "${SERVICE_NAME}:${IMAGE_TAG}" \
+            --builder gcr.io/buildpacks/builder:latest \
+            --path ./api \
+            --platform linux/amd64 \
+            --env PYTHONPATH="$PYTHONPATH" \
+            --env CLERK_SECRET_KEY="$CLERK_SECRET_KEY" \
+            --env MODAL_TOKEN_ID="$MODAL_TOKEN_ID" \
+            --env MODAL_TOKEN_SECRET="$MODAL_TOKEN_SECRET" \
+            --env CONVEX_HTTP_CLIENT_API_KEY="$CONVEX_HTTP_CLIENT_API_KEY" \
+            --env FAL_KEY="$FAL_KEY" \
+            --env TEST_FOLIO_SHEET_CONFIG="$TEST_FOLIO_SHEET_CONFIG" \
+            --env REDIS_URL="$REDIS_URL" \
+            --env BUCKET_NAME="$BUCKET_NAME" \
+            --env RESULT_LIMIT="$RESULT_LIMIT"
+
+      # Push the freshly-built image to the correct Jamsocket service
+      - name: Push image to Jamsocket
+        env:
+          JAMSOCKET_TOKEN: ${{ secrets.JAMSOCKET_TOKEN }}
+        run: |
+          npx --yes jamsocket login --token "$JAMSOCKET_TOKEN"
+          npx --yes jamsocket push "$SERVICE_NAME" \
+               "${SERVICE_NAME}:${IMAGE_TAG}" \
+               --tag "$IMAGE_TAG"

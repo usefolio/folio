@@ -1,0 +1,9 @@
+pytest 
+pytest-asyncio
+pytest-cov
+
+-e ../random_access_flushable_queue
+-e ../shared_types
+-e ../cell_states
+-e ../task_processor
+-e ../job_executor

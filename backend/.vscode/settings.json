@@ -1,0 +1,21 @@
+{
+    "editor.formatOnSave": true,
+    "pylint.args": [
+        "--rcfile=.pylintrc"
+    ],
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "black-formatter.args": [
+        "--line-length",
+        "88"
+    ],
+    "python.analysis.typeCheckingMode": "off",
+    "pylint.enabled": true,
+    "python.analysis.extraPaths": [
+        "libs",
+        "queue_processor",
+        "api"
+    ]
+}

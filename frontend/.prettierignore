@@ -1,0 +1,14 @@
+node_modules
+dist
+build
+.vscode
+tests
+playwright
+playwright-report
+patches
+convex
+.vercel
+.husky
+.history
+.github
+public

@@ -1,0 +1,11 @@
+tenacity
+requests
+fal_client
+openai
+google-generativeai
+anthropic
+duckdb
+pandas # this is because of the dataset_processor import
+-e ../libs/folio/utils/shared_types
+-e ../libs/folio/utils/task_processor
+-e ../libs/folio/utils/usage_cop

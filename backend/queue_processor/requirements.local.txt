@@ -1,0 +1,23 @@
+openai
+duckdb
+flower
+jinja2
+pandas
+pydantic
+modal
+pyarrow
+celery[redis]
+httpx
+
+-e ../libs/folio/utils/storage_helper
+-e ../libs/folio/utils/cell_states
+-e ../libs/folio/utils/convex_client
+-e ../libs/folio/utils/random_access_flushable_queue
+-e ../libs/folio/utils/shared_types
+-e ../libs/folio/utils/storage_backend
+-e ../libs/folio/utils/usage_cop
+-e ../libs/folio/utils/queue_monitor
+-e ../libs/folio/utils/task_processor
+-e ../libs/folio/utils/workflow_runner_client
+-e ../libs/folio/utils/job_executor
+-e ../libs/folio/utils/dataset_processor

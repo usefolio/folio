@@ -1,0 +1,78 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: FastAPI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "cwd": "${workspaceFolder}/api",
+            "args": [
+                "main:app",
+                "--reload"
+            ],
+            "jinja": true,
+            "envFile": "${workspaceFolder}/api/.env.local",
+            "python": "${workspaceFolder}/venv/bin/python",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/libs:${workspaceFolder}/queue_processor"
+            }
+        },
+        {
+            "name": "Python: Celery Worker (web)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "celery",
+            "cwd": "${workspaceFolder}/queue_processor",
+            "console": "integratedTerminal",
+            "args": [
+                "-A",
+                "bg_tasks:celery_app",
+                "worker",
+                "--loglevel=info",
+                "-Q",
+                "celery"
+            ],
+            "envFile": "${workspaceFolder}/queue_processor/.env.local",
+            "python": "${workspaceFolder}/venv/bin/python",
+            "env": {
+                "BROKER_URL": "redis://localhost:6379/0",
+                "PYTHONPATH": "${workspaceFolder}/libs:${workspaceFolder}/queue_processor"
+            }
+        },
+        {
+            "name": "Python: Flower",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "celery",
+            "cwd": "${workspaceFolder}/queue_processor",
+            "console": "integratedTerminal",
+            "args": [
+                "-A",
+                "bg_tasks:celery_app",
+                "flower",
+                "--broker=redis://localhost:6379/0",
+                "--url-prefix=/yourpath"
+            ],
+            "envFile": "${workspaceFolder}/queue_processor/.env.local",
+            "python": "${workspaceFolder}/venv/bin/python",
+            "env": {
+                "BROKER_URL": "redis://localhost:6379/0",
+                "PYTHONPATH": "${workspaceFolder}/libs:${workspaceFolder}/queue_processor"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Run FastAPI and Celery and Flower",
+            "configurations": [
+                "Python Debugger: FastAPI",
+                "Python: Celery Worker (web)",
+                "Python: Flower"
+            ]
+        }
+    ]
+}

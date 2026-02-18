@@ -1,0 +1,134 @@
+local_tmp/
+modal/.modal.toml
+dump.rdb
+temp_data/
+
+queue_processor/dump.rdb
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyc
+
+# Virtual environments
+folio-sheet-server-venv/
+venv/
+.env/
+*.env
+test-venv
+
+# Logs and debug artifacts
+*.log
+logs/
+tmp/
+*.coverage
+coverage.xml
+htmlcov/
+
+# Packaging artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+
+# Static and media files
+static/
+media/
+
+# Local deployment
+docker-compose.override.yml
+
+# IDE/Editor files
+.DS_Store
+
+# Dependency management
+poetry.lock
+Pipfile
+Pipfile.lock
+
+# Google Cloud credentials (or similar)
+key.json
+
+# Node.js (if using JavaScript/TypeScript assets)
+node_modules/
+package-lock.json
+yarn.lock
+# Allow lockfile for integration tests
+!integ_tests/package-lock.json
+# Monorepo exceptions
+!frontend/package-lock.json
+
+# Optional: JetBrains IDE settings (PyCharm, WebStorm, etc.)
+*.iml
+*.ipr
+*.iws
+
+# Local Env
+.env.local
+.env.docker
+
+__pycache__/
+venv/
+
+repomix-output.txt
+
+# Local testing stuff
+usage_cop_playground.ipynb
+marker_client_playground.ipynb
+modal/modal_remotef_test.ipynb
+*.ipynb
+
+# Dependency directories
+node_modules/
+
+# Production build
+build/
+
+# Cache and log files
+*.log
+*.cache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+!frontend/src/components/logs/
+!frontend/src/components/logs/**
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Editor settings
+# .vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+*.lcov
+
+# Parcel cache (if using Parcel bundler)
+.cache/
+
+# Ignore lock files if your team doesn't standardize on one
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+.env.local
+.history
+
+dist/
+.vercel
+
+playwright/.clerk
+/app-overhaul
+/file-upload-latest
+
+*storybook.log
+storybook-static

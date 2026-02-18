@@ -1,0 +1,7 @@
+pandas 
+pyarrow 
+duckdb 
+modal
+
+# -e ../storage_helper
+# -e ../dataset_processor

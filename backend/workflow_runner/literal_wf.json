@@ -1,0 +1,618 @@
+{
+  "workflow_id": "auto-generated-workflow-id",
+  "name": "Auto-Generated Workflow",
+  "description": "Parsed from JSON file",
+  "steps": [
+    {
+      "id": "15a53ddc-93e0-444f-917d-dec962c4037b",
+      "action": "create_view",
+      "title": "StepAction.CREATE_VIEW step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_sheet_id": "{{ convex_sheet_id }}",
+        "sql_filter": "1=1",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "7f3848e8-e228-4f4c-915a-5eadf2ffc763",
+      "action": "process",
+      "title": "StepAction.PROCESS step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_column_id": "{{ convex_column_id }}",
+        "column_name": "industry_type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "system_prompt": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. ",
+          "user_prompt_template": "can you classify the following website into one of the buckets?\n\n{{Domain}}",
+          "response_format": {
+            "type": "json_schema",
+            "json_schema": {
+              "name": "Classification",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "extraction_keyword": {
+                    "type": "string",
+                    "enum": [
+                      "ecommerce",
+                      "finance",
+                      "manufacturing",
+                      "non-profit",
+                      "other",
+                      "restaurant",
+                      "education",
+                      "technology",
+                      "healthcare"
+                    ]
+                  }
+                },
+                "required": [
+                  "extraction_keyword"
+                ]
+              }
+            }
+          }
+        },
+        "sql_condition": "1=1",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "Domain"
+        ],
+        "workflow_id": "{{ workflow_id }}",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "8622782f-7986-4653-8e43-81c8619d23ea",
+      "action": "process",
+      "title": "StepAction.PROCESS step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_column_id": "{{ convex_column_id }}",
+        "column_name": "support_page_url",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "can you go to {{Domain}} and find the url of the support page ? only return the link to the support page."
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "1=1",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "Domain"
+        ],
+        "workflow_id": "{{ workflow_id }}",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "81d47c18-241f-4887-ac0f-1f4f579e1ee8",
+      "action": "create_view",
+      "title": "StepAction.CREATE_VIEW step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_sheet_id": "{{ convex_sheet_id }}",
+        "sql_filter": "\"industry_type\" LIKE '%ecommerce%'",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "e04ba23e-e624-4acf-bac0-a5f465b59572",
+      "action": "process",
+      "title": "StepAction.PROCESS step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_column_id": "{{ convex_column_id }}",
+        "column_name": "ecommerce_kind",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}}  is {{Domain}}  in ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%ecommerce%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "{{ workflow_id }}",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "4d0baa11-e34d-4b01-8e99-aff883c105f6",
+      "action": "create_view",
+      "title": "StepAction.CREATE_VIEW step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_sheet_id": "{{ convex_sheet_id }}",
+        "sql_filter": "\"industry_type\" LIKE '%finance%'",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "5258b565-ee27-4a8c-b757-974f738369c5",
+      "action": "process",
+      "title": "StepAction.PROCESS step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_column_id": "{{ convex_column_id }}",
+        "column_name": "finance_type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ? "
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%finance%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "{{ workflow_id }}",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "11a693e1-d31a-401d-ab12-c51caa70dad1",
+      "action": "create_view",
+      "title": "StepAction.CREATE_VIEW step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_sheet_id": "{{ convex_sheet_id }}",
+        "sql_filter": "\"industry_type\" LIKE '%manufacturing%'",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "9922ee9b-293e-4e79-9a09-576ac2ad2296",
+      "action": "process",
+      "title": "StepAction.PROCESS step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_column_id": "{{ convex_column_id }}",
+        "column_name": "manufacturing_type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%manufacturing%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "{{ workflow_id }}",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "31785480-f93f-4fb4-95a6-69f92c549206",
+      "action": "create_view",
+      "title": "StepAction.CREATE_VIEW step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_sheet_id": "{{ convex_sheet_id }}",
+        "sql_filter": "\"industry_type\" LIKE '%non-profit%'",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "7547d6ea-8abf-48be-a94c-b03774a6d19f",
+      "action": "process",
+      "title": "StepAction.PROCESS step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_column_id": "{{ convex_column_id }}",
+        "column_name": "nonprofit-type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%non-profit%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "{{ workflow_id }}",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "db873cc5-a215-4d46-897b-4e83978737d3",
+      "action": "create_view",
+      "title": "StepAction.CREATE_VIEW step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_sheet_id": "{{ convex_sheet_id }}",
+        "sql_filter": "\"industry_type\" LIKE '%other%'",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "02b096a9-8f6c-4ce5-81ca-d3e2614a0381",
+      "action": "process",
+      "title": "StepAction.PROCESS step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_column_id": "{{ convex_column_id }}",
+        "column_name": "other-type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%other%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "{{ workflow_id }}",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "cdda315b-cecc-4a66-855a-883697c96e56",
+      "action": "create_view",
+      "title": "StepAction.CREATE_VIEW step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_sheet_id": "{{ convex_sheet_id }}",
+        "sql_filter": "\"industry_type\" LIKE '%restaurant%'",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "f9856aa7-ad10-46ab-9769-cb2c155f63d2",
+      "action": "process",
+      "title": "StepAction.PROCESS step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_column_id": "{{ convex_column_id }}",
+        "column_name": "restaurant-type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%restaurant%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "{{ workflow_id }}",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "d2bc0093-2933-4ce3-b31b-f4fc9f2cc85e",
+      "action": "create_view",
+      "title": "StepAction.CREATE_VIEW step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_sheet_id": "{{ convex_sheet_id }}",
+        "sql_filter": "\"industry_type\" LIKE '%education%'",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "15a95f40-f0c7-4eb3-a8f5-3df427e020e8",
+      "action": "process",
+      "title": "StepAction.PROCESS step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_column_id": "{{ convex_column_id }}",
+        "column_name": "education-type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%education%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "{{ workflow_id }}",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "7300b75e-ca75-46d4-86cb-f545c544e8af",
+      "action": "create_view",
+      "title": "StepAction.CREATE_VIEW step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_sheet_id": "{{ convex_sheet_id }}",
+        "sql_filter": "\"industry_type\" LIKE '%technology%'",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "72b4a7d0-beef-4f03-9146-b7a44556c369",
+      "action": "process",
+      "title": "StepAction.PROCESS step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_column_id": "{{ convex_column_id }}",
+        "column_name": "techonlogy-type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%technology%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "{{ workflow_id }}",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "6a08993f-2162-4aad-9455-1d416d704fa2",
+      "action": "create_view",
+      "title": "StepAction.CREATE_VIEW step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_sheet_id": "{{ convex_sheet_id }}",
+        "sql_filter": "\"industry_type\" LIKE '%healthcare%'",
+        "callback_url": "{{ callback_url }}"
+      }
+    },
+    {
+      "id": "231e17fc-e573-4ea3-a079-63ffae91a7b1",
+      "action": "process",
+      "title": "StepAction.PROCESS step",
+      "description": "Parsed from JSON file sample-2.json",
+      "depends_on": [],
+      "payload": {
+        "convex_project_id": "{{ convex_project_id }}",
+        "convex_column_id": "{{ convex_column_id }}",
+        "column_name": "healthcare-type",
+        "prompt": {
+          "model": "gpt-4.1",
+          "messages": [
+            {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a call center supervisor with a lot of experience listening in on calls between call center representatives and customers. "
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "what kind of {{industry_type}} company is {{Domain}}  ?"
+                }
+              ]
+            }
+          ]
+        },
+        "sql_condition": "\"industry_type\" LIKE '%healthcare%'",
+        "output_name": "extraction_keyword",
+        "prompt_input_columns": [
+          "industry_type",
+          "Domain"
+        ],
+        "workflow_id": "{{ workflow_id }}",
+        "callback_url": "{{ callback_url }}"
+      }
+    }
+  ]
+}

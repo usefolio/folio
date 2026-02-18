@@ -1,0 +1,25 @@
+@startuml
+participant "Worfklow Runner - Worker" as Prefect
+participant "folio API" as External
+participant "folio Queue Processor (Celery)" as Celery
+participant "Workflow Runner - API" as PrefectAPI
+
+== Flow Execution Starts ==
+Prefect -> External: Start Long-running Task (POST /process {task_id: PREFECT_TASK_ID})
+External -> Celery: Queue Task with prefect callback 
+External -> Prefect: {job_id: 123, ...}
+Prefect -> Prefect: PREFECT_PAUSE()
+
+== External Task Processing ==
+Celery -> Celery: Process Long-running Task
+
+
+== Celery Notifies Prefect ==
+Celery -> PrefectAPI: POST f"{PREFECT_API_URL}{task_run_id}/set_state" COMPLETED
+PrefectAPI -> Prefect: Resume Flow (resume_flow_run)
+
+== Prefect Continues Execution ==
+Prefect -> Prefect: Resume and Run Dependent Task
+Prefect -> PrefectAPI: Task Marked as COMPLETED
+
+@enduml

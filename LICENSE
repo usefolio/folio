@@ -1,0 +1,21 @@
+Folio Repository Licensing Notice
+Copyright (c) Isengard LLC. All rights reserved.
+
+This repository is source-available, not open source.
+
+License scope by path:
+- `frontend/**`: Licensed under the Folio Enterprise Component License v1.0 (`LICENSE-ENTERPRISE.md`).
+- All other first-party repository code and docs (excluding `frontend/**`): Licensed under the Folio Community Internal Use License v1.0 (`LICENSE-COMMUNITY.md`).
+
+Third-party code and assets:
+- Third-party dependencies, vendored code, and their licenses remain governed by their own license terms.
+- If there is a conflict between this notice and a third-party license file attached to third-party content, the third-party license controls that third-party content.
+
+Commercial rights:
+- Any right to provide Folio to third parties as a hosted service, or to charge for support/services/resale/OEM/white-label/sublicensing, requires a separate written commercial agreement with Isengard LLC.
+- Commercial terms are handled on a client-by-client basis.
+
+Trademarks:
+- Use of the Folio name, logos, and marks is governed by `TRADEMARK_POLICY.md`.
+
+For commercial licensing inquiries, contact Isengard LLC.

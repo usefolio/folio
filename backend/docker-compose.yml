@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "8000:8000"  # FastAPI
+      - "5555:5555"  # Flower
+    env_file:
+      - .env.docker
+    depends_on:
+      - redis
+    environment:
+      - PORT=8000
+      - REDIS_URL=redis://redis:6379/0
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"

@@ -1,0 +1,7 @@
+pytest
+pytest-cov
+pydantic>=2.0,<3.0
+httpx
+
+-e ../storage_backend
+-e ../storage_helper

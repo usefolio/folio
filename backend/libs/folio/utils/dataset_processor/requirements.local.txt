@@ -1,0 +1,7 @@
+pyarrow
+tiktoken
+chardet
+
+-e ../libs/folio/utils/storage_helper
+-e ../libs/folio/utils/convex_client
+-e ../libs/folio/utils/shared_types

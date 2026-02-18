@@ -1,0 +1,10 @@
+pandas 
+pyarrow 
+duckdb 
+pytest
+pytest-cov
+modal
+
+-e ../storage_helper
+-e ../dataset_processor
+-e ../shared_types

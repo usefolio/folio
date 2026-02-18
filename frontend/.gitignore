@@ -1,0 +1,51 @@
+
+# Dependency directories
+node_modules/
+
+# Production build
+build/
+
+# Cache and log files
+*.log
+*.cache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Editor settings
+# .vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+*.lcov
+
+# Parcel cache (if using Parcel bundler)
+.cache/
+
+# Ignore lock files if your team doesn't standardize on one
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+.env.local
+.history
+
+dist/
+.vercel
+
+playwright/.clerk
+/app-overhaul
+/file-upload-latest
+
+*storybook.log
+storybook-static

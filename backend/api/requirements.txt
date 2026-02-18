@@ -1,0 +1,44 @@
+duckdb
+uvicorn
+fastapi
+pydantic
+modal
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-instrumentation-fastapi
+tenacity
+google-auth
+pandas
+pyarrow
+jinja2
+clerk-backend-api
+##TODO: its bizarre that we need this but a todo for later.
+openai
+convex
+tiktoken
+python-multipart
+# celery specific packages
+httpx
+# this is for running bg_tasks "scalably"
+flower
+celery[redis] 
+# This is for testing the Procfile locally
+honcho
+openpyxl
+# This is for celery really - but since we import from bg_tasks import start_processing_daemons_task
+# and since we dont actually run a pip install on the queue_processor, we need to include it here.
+# TODO: figure out a long term dependency solution for this. This is also whats causing the app
+# to be on python 3.12
+-e libs/folio/utils/workflow_runner_client
+-e libs/folio/utils/storage_helper
+-e libs/folio/utils/cell_states
+-e libs/folio/utils/convex_client
+-e libs/folio/utils/random_access_flushable_queue
+-e libs/folio/utils/shared_types
+-e libs/folio/utils/data_lakehouse
+-e libs/folio/utils/job_executor
+-e libs/folio/utils/transcription_client
+-e libs/folio/utils/storage_backend
+-e libs/folio/utils/workflow_tools
+-e libs/folio/utils/dataset_processor
+-e libs/folio/utils/usage_cop

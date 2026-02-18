@@ -1,0 +1,125 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python application
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-python-app.yml"
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-python-app.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+        
+    - name: Create coverage directories
+      run: |
+        mkdir -p coverage/data_lakehouse
+        mkdir -p coverage/queue_monitor
+        mkdir -p coverage/dataset_processor
+        mkdir -p coverage/cell_states
+        mkdir -p coverage/usage_cop
+
+    - name: Install dependencies for data lakehouse test
+      run: |
+        python -m pip install --upgrade pip
+        pip install genbadge[coverage]
+        if [ -f libs/folio/utils/data_lakehouse/requirements.txt ]; then cd libs/folio/utils/data_lakehouse && pip install -r requirements.test.txt; fi
+    - name: Test data lakehouse with pytest
+      run: |
+        export PYTHONPATH=./libs:./libs/folio/utils/:$PYTHONPATH && pytest libs/folio/utils/data_lakehouse/test_data_lakehouse.py -vv \
+        --cov=libs/folio/utils/data_lakehouse --cov-report=xml:coverage/data_lakehouse/coverage.xml
+    - name: Generate badge for data lakehouse
+      run: ls -l coverage/data_lakehouse && cd coverage/data_lakehouse && genbadge coverage -i coverage.xml -o badge.svg
+    
+    - name: Install dependencies for queue_monitor test
+      run: |
+        python -m pip install --upgrade pip
+        pip install genbadge[coverage]
+        if [ -f libs/folio/utils/queue_monitor/requirements.test.txt ]; then cd libs/folio/utils/queue_monitor && pip install -r requirements.test.txt; fi
+    - name: Test queue monitor with pytest
+      run: |
+        export PYTHONPATH=./libs:./libs/folio/utils/:$PYTHONPATH && pytest libs/folio/utils/queue_monitor/test_queue_monitor.py -vv \
+        --cov=libs/folio/utils/queue_monitor --cov-report=xml:coverage/queue_monitor/coverage.xml
+    - name: Generate badge for queue monitor
+      run: ls -l coverage/queue_monitor && cd coverage/queue_monitor && genbadge coverage -i coverage.xml -o badge.svg
+    
+    - name: Install dependencies for cell_states test
+      run: |
+        python -m pip install --upgrade pip
+        pip install genbadge[coverage]
+        if [ -f libs/folio/utils/cell_states/requirements.test.txt ]; then cd libs/folio/utils/cell_states && pip install -r requirements.test.txt; fi
+    - name: Test cell_states with pytest
+      run: |
+        export PYTHONPATH=./libs:./libs/folio/utils/:$PYTHONPATH && pytest libs/folio/utils/cell_states/test_cell_states.py -vv \
+        --cov=libs/folio/utils/cell_states --cov-report=xml:coverage/cell_states/coverage.xml
+    - name: Generate badge for cell_states
+      run: ls -l coverage/cell_states && cd coverage/cell_states && genbadge coverage -i coverage.xml -o badge.svg
+
+    - name: Install dependencies for dataset_processor test
+      run: |
+        python -m pip install --upgrade pip
+        pip install genbadge[coverage]
+        if [ -f libs/folio/utils/dataset_processor/requirements.test.txt ]; then cd libs/folio/utils/dataset_processor && pip install -r requirements.test.txt; fi
+    - name: Test dataset_processor with pytest
+      run: |
+        export PYTHONPATH=./libs:./libs/folio/utils/:$PYTHONPATH && pytest libs/folio/utils/dataset_processor/test_dataset_processor.py -vv \
+        --cov=libs/folio/utils/dataset_processor --cov-report=xml:coverage/dataset_processor/coverage.xml
+    - name: Generate badge for dataset_processor
+      run: ls -l coverage/dataset_processor && cd coverage/dataset_processor && genbadge coverage -i coverage.xml -o badge.svg
+
+    - name: Install dependencies for usage_cop test
+      run: |
+        python -m pip install --upgrade pip
+        pip install genbadge[coverage]
+        if [ -f libs/folio/utils/usage_cop/requirements.test.txt ]; then cd libs/folio/utils/usage_cop && pip install -r requirements.test.txt; fi
+    - name: Test usage_cop with pytest
+      run: |
+        export PYTHONPATH=./libs:./libs/folio/utils/:$PYTHONPATH && pytest libs/folio/utils/usage_cop/test_aggregation.py -vv \
+        --cov=libs/folio/utils/usage_cop --cov-report=xml:coverage/usage_cop/coverage.xml
+    - name: Generate badge for usage_cop
+      run: ls -l coverage/usage_cop && cd coverage/usage_cop && genbadge coverage -i coverage.xml -o badge.svg
+    
+    # Configure Git user for committing
+    - name: Configure Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+    # Add and commit the coverage badge
+    - name: Commit coverage badge
+      if: github.event_name == 'push'
+      run: |
+        git add -f coverage/data_lakehouse/badge.svg
+        git add -f coverage/queue_monitor/badge.svg
+        git add -f coverage/cell_states/badge.svg
+        git add -f coverage/dataset_processor/badge.svg
+        git add -f coverage/usage_cop/badge.svg
+        git commit -m "Update coverage badge [skip ci]" || echo "No changes to commit"
+
+    # Push changes to the repository
+    - name: Push changes
+      if: github.event_name == 'push'
+      run: |
+        git push origin HEAD

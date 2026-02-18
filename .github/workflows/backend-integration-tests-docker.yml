@@ -1,0 +1,153 @@
+name: Integration Tests (Docker)
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-integration-tests-docker.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integ-docker:
+    runs-on: ubuntu-latest
+    environment: dev
+    defaults:
+      run:
+        shell: bash
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare .env.docker
+        run: |
+          echo '${{ secrets.DOCKER_ENV_FILE }}' > .env.docker
+          # Keep API tests pointed at local Docker service.
+          if grep -q '^API_BASE_URL=' .env.docker; then
+            sed -i 's|^API_BASE_URL=.*|API_BASE_URL=http://localhost:8000|' .env.docker
+          else
+            echo "API_BASE_URL=http://localhost:8000" >> .env.docker
+          fi
+          # Ensure required API key exists for container startup.
+          if ! grep -Eq '^[[:space:]]*(export[[:space:]]+)?FOLIO_API_KEY[[:space:]]*=' .env.docker; then
+            if [ -n "${{ secrets.FOLIO_API_KEY }}" ]; then
+              echo "FOLIO_API_KEY missing in DOCKER_ENV_FILE; appending from FOLIO_API_KEY secret."
+              echo "FOLIO_API_KEY=${{ secrets.FOLIO_API_KEY }}" >> .env.docker
+            else
+              echo "FOLIO_API_KEY missing in DOCKER_ENV_FILE and FOLIO_API_KEY secret is empty."
+              exit 1
+            fi
+          fi
+
+      - name: Validate required API env vars (names only)
+        run: |
+          python - <<'PY'
+          import ast
+          import re
+          import sys
+          from pathlib import Path
+
+          deps = Path("api/dependencies.py").read_text()
+          tree = ast.parse(deps)
+          required = []
+          for node in tree.body:
+              if isinstance(node, ast.Assign):
+                  for target in node.targets:
+                      if isinstance(target, ast.Name) and target.id == "REQUIRED_ENV_VARS":
+                          required = ast.literal_eval(node.value)
+
+          env_map = {}
+          for line in Path(".env.docker").read_text().splitlines():
+              line = line.strip()
+              if not line or line.startswith("#") or "=" not in line:
+                  continue
+              # Support formats like:
+              #   FOO=bar
+              #   FOO = bar
+              #   export FOO=bar
+              m = re.match(r'^(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$', line)
+              if not m:
+                  continue
+              k, v = m.group(1), m.group(2)
+              env_map[k] = v
+
+          missing = [k for k in required if k not in env_map]
+          empty = [k for k in required if k in env_map and env_map[k] == ""]
+          if missing:
+              print("Missing required API env keys:")
+              for key in missing:
+                  print(f"  - {key}")
+          if empty:
+              print("Empty required API env keys:")
+              for key in empty:
+                  print(f"  - {key}")
+          if not missing and not empty:
+              print("All required API env keys are present.")
+          if "FOLIO_API_KEY" in env_map:
+              print(f"FOLIO_API_KEY present; value_length={len(env_map['FOLIO_API_KEY'])}")
+          if missing or empty:
+              sys.exit(1)
+          PY
+
+      - name: Start Docker services
+        run: docker compose up --build -d
+
+      - name: Wait for API health
+        run: |
+          HEALTH_URL="http://localhost:8000/health"
+          echo "Waiting for API to be ready..."
+          for i in {1..30}; do
+            echo "Attempt $i/30: checking /health"
+            if curl -fsS "$HEALTH_URL"; then
+              echo "API is ready!"
+              break
+            elif [ "$i" -eq 30 ]; then
+              echo "API failed to become ready after 150 seconds"
+              docker compose ps -a
+              docker compose logs app --tail 200
+              docker compose logs redis --tail 100
+              exit 1
+            else
+              sleep 5
+            fi
+          done
+          
+      - name: Set up Node.js for tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install integration test dependencies
+        working-directory: backend/integ_tests
+        run: npm ci
+
+      - name: Run integration tests
+        working-directory: backend/integ_tests
+        run: npm test
+        env:
+          API_BASE_URL: http://localhost:8000
+          TEST_USER_TOKEN: ${{ secrets.TEST_USER_TOKEN }}
+          TEST_USER_ID: ${{ secrets.TEST_USER_ID }}
+          CONVEX_URL: ${{ secrets.CONVEX_URL }}
+          CONVEX_HTTP_CLIENT_API_KEY: ${{ secrets.CONVEX_HTTP_CLIENT_API_KEY }}
+          FOLIO_API_KEY: ${{ secrets.FOLIO_API_KEY }}
+
+      - name: Show service logs on failure
+        if: failure()
+        run: |
+          echo "Container status:"
+          docker compose ps -a
+          echo "API logs:"
+          docker compose logs app --tail 200
+          echo "Redis logs:"
+          docker compose logs redis --tail 100
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker compose down --remove-orphans
+          rm -f .env.docker
