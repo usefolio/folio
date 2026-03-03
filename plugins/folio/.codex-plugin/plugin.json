@@ -1,0 +1,45 @@
+{
+  "name": "folio",
+  "version": "0.0.1",
+  "description": "Desktop app and MCP server for rigorous, auditable tabular document review workflows.",
+  "author": {
+    "name": "Isengard LLC",
+    "email": "admin@usefolio.ai",
+    "url": "https://github.com/usefolio"
+  },
+  "homepage": "https://usefolio.ai",
+  "repository": "https://github.com/usefolio/folio",
+  "license": "UNLICENSED",
+  "keywords": [
+    "folio",
+    "mcp",
+    "document-review",
+    "legal-tech",
+    "due-diligence",
+    "compliance"
+  ],
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Folio",
+    "shortDescription": "Tabular document review with AI via local MCP",
+    "longDescription": "Folio helps teams run high-stakes document review workflows locally, then expose tools through MCP for auditable AI-assisted retrieval, classification, and extraction.",
+    "developerName": "Folio",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "websiteURL": "https://usefolio.ai",
+    "privacyPolicyURL": "https://usefolio.ai/privacy-policy",
+    "termsOfServiceURL": "https://usefolio.ai/terms-of-use",
+    "defaultPrompt": [
+      "Install Folio and connect its MCP server in this environment.",
+      "Set up a criteria-based search workflow for this document set.",
+      "Build a repeatable sensemaking pipeline for due diligence."
+    ],
+    "brandColor": "#111111",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/icon.png",
+    "screenshots": []
+  }
+}

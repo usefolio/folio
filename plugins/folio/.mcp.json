@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "folio": {
+      "type": "http",
+      "url": "http://127.0.0.1:8765/mcp",
+      "note": "Local Folio MCP server exposed by the Folio desktop app. Start Folio before connecting."
+    }
+  }
+}

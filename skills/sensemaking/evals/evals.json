@@ -1,0 +1,23 @@
+{
+  "skill_name": "sensemaking",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I've got about 1,200 earnings call transcripts from mid-cap tech companies spanning 2022-2024. I need to figure out what's driving the ones that tanked the stock price vs the ones the market liked. There's a `content` column with the transcript and a `ticker` column.",
+      "expected_output": "A multi-step pipeline that orients first, classifies by market reaction, extracts comparable features, creates parallel views for comparison, and produces a report.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "ok so for these supplier audit reports, first I want to tag each one by audit category -- quality, environmental, labor, safety, financial -- then for the ones flagged as labor or safety I need to pull out any corrective actions mentioned and whether there's a deadline. Then filter to just the ones with no deadline. the columns are `files`, `content`, and `supplier_name`.",
+      "expected_output": "A pipeline that follows the user's described procedure, mapping each step to Folio tool calls, filling in label sets and filter predicates.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "We have 3,000 employee expense reports that got flagged by the automated system. Most of these are probably fine -- formatting issues, missing receipts, that kind of thing. I need to hunt for the ones that are actually suspicious. Help me narrow this down to a reviewable set. Columns: `content`, `employee_name`, `department`, `amount`, `flag_reason`.",
+      "expected_output": "A pipeline that structures the flagged reports, distinguishes benign flags from suspicious ones, and narrows to a small reviewable evidence set.",
+      "files": []
+    }
+  ]
+}

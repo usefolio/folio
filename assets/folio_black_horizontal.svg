@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 180" width="100%" height="100%">
+  <defs>
+    <path id="doc-shape" d="M 20 0 H 55 Q 70 0 70 15 Q 70 30 85 30 V 95 A 20 20 0 0 1 65 115 H 20 A 20 20 0 0 1 0 95 V 20 A 20 20 0 0 1 20 0 Z" />
+  </defs>
+
+  <g style="mix-blend-mode: multiply;">
+    <use href="#doc-shape" x="70" y="15" fill="#FFC107" opacity="0.85" />
+    <use href="#doc-shape" x="35" y="35" fill="#FF9800" opacity="0.85" />
+    <use href="#doc-shape" x="0" y="55" fill="#FF5722" opacity="0.9" />
+  </g>
+
+  <text x="180" y="132" font-family="'Arial Black', 'Helvetica Neue', Helvetica, sans-serif" font-weight="700" font-size="115" letter-spacing="-4" fill="#3f3f46">
+    folio
+  </text>
+</svg>
