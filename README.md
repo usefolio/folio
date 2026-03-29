@@ -29,7 +29,7 @@
 
 ---
 
-Folio is built for teams doing high-stakes document review: legal discovery, financial diligence, compliance, and regulated research. Use AI models to sift through your files and extract relevant insights.
+Folio is a desktop app and MCP server for high-stakes document review: legal discovery, financial diligence, compliance, and regulated research. Connect it to Claude Code (or any MCP client) and use AI models to sift through your files and extract relevant insights.
 
 - Curate and search documents at scale. Filter out files that don't fit your criteria.
 - Create repeatable workflows for research. Dictate "how to search" not "what to search".
@@ -46,6 +46,27 @@ Most tools in this category (Legora’s Tabular Review, Harvey’s Review Tables
 <!-- <p align="center">
   <img src="" alt="Folio workflow" width="900" />
 </p> -->
+
+---
+
+## MCP Integration
+
+Folio runs a local [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server, so AI coding agents like Claude Code can use Folio's tools natively -- no raw HTTP calls needed.
+
+### Quick setup
+
+1. [Download and install Folio](https://github.com/usefolio/folio/releases/latest), then launch it.
+2. Register Folio as an MCP server:
+
+```bash
+claude mcp add --scope user --transport http folio http://127.0.0.1:8765/mcp
+```
+
+3. Start a new Claude Code conversation. Folio's tools (`project_metadata`, `sampler`, `run_prompt`, etc.) will appear as native MCP tools -- call them directly, just like any other tool.
+
+> **Don't curl the MCP endpoint manually.** Once Folio is registered as an MCP server, Claude Code handles the JSON-RPC transport automatically. Use the tools by name.
+
+For detailed setup instructions (platform detection, troubleshooting, port configuration), use the install skill: `/install`.
 
 ---
 ## Extract insights at scale with rigorous processes.

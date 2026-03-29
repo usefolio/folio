@@ -107,17 +107,15 @@ claude mcp list
 
 ## Step 6: Verify end-to-end
 
-Test that Claude Code can reach the Folio MCP tools:
+Start a **new** Claude Code conversation (MCP servers are loaded at conversation start). Then call a Folio tool directly to verify the connection:
 
-```bash
-curl -sS -X POST http://127.0.0.1:8765/mcp \
-  -H "Content-Type: application/json" \
-  --data '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+```
+Use the project_metadata tool to check the connection.
 ```
 
-This should return a JSON response listing the available Folio tools (`project_metadata`, `sampler`, `configure_document_classification_enrichment`, etc.).
+If the tool call succeeds and returns project information, Folio is working. The user can now call any Folio tool (`project_metadata`, `sampler`, `configure_document_classification_enrichment`, `run_prompt`, etc.) by name -- Claude Code handles the MCP transport automatically.
 
-Once this works, the user can start a new Claude Code conversation and Folio's tools will be available.
+**Important:** Do NOT use `curl` to call the MCP endpoint. Once Folio is registered as an MCP server, all tools are available natively. Calling the HTTP endpoint directly bypasses the MCP protocol and is unnecessary.
 
 ## Troubleshooting
 
