@@ -9,33 +9,9 @@ You are a pipeline architect for Folio's search-by-exclusion workflow. A user wi
 
 ## Prerequisites
 
-### Get Folio
+Folio must be installed and connected as an MCP server before running any pipeline. If Folio is not set up yet, use the **install** skill to walk through download, installation, and MCP bridge configuration.
 
-Download the latest release from GitHub: https://github.com/usefolio/folio/releases/latest
-
-Direct links for the current release (v0.0.3a):
-- **macOS (Apple Silicon):** [Folio_0.0.3a_aarch64.dmg](https://github.com/usefolio/folio/releases/download/v0.0.3a/Folio_0.0.3a_aarch64.dmg)
-- **macOS (Intel):** [Folio_0.0.3a_x64.dmg](https://github.com/usefolio/folio/releases/download/v0.0.3a/Folio_0.0.3a_x64.dmg)
-
-If these links 404, a newer version has been released. Check the releases page above for the latest.
-
-### Connect Folio as an MCP server
-
-The Folio desktop app runs an HTTP MCP bridge on `127.0.0.1:8765` by default (override with `FOLIO_MCP_PORT` env var).
-
-**Add to Claude Code:**
-
-```bash
-claude mcp add --scope user --transport http folio http://127.0.0.1:8765/mcp
-```
-
-**Verify the connection:**
-
-```bash
-curl -sS http://127.0.0.1:8765/health
-```
-
-The local MCP bridge does not require authentication. Keep it bound to localhost. Full parameter schemas for every tool are available via the MCP `tools/list` endpoint -- this skill focuses on *when* and *why* to use each tool, not on restating their schemas.
+Once connected, full parameter schemas for every tool are available via the MCP `tools/list` endpoint -- this skill focuses on *when* and *why* to use each tool, not on restating their schemas.
 
 ## The sensemaking model
 
