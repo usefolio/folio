@@ -1,0 +1,23 @@
+{
+  "skill_name": "criteria-search",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I've got about 500 SEC filings from various tech companies. I need to find the ones that contain meaningful information about Palantir's government revenue pipeline -- not just passing mentions but actual data I can use for modeling. Columns are `content`, `company_name`, `filing_type`, `filing_date`.",
+      "expected_output": "Generates 5-10 falsifiable criteria covering Palantir entity match, government revenue specifics, quantitative data, recency, and modeling utility. Presents criteria to user before executing. Each criterion maps to a binary classification enrichment. Creates tiered views and an evidence report with pass rates.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We have a dataset of 800 research papers on large language models. My team needs to find papers that propose novel evaluation benchmarks for reasoning capabilities -- not papers that just use existing benchmarks, but ones that actually introduce new ones. Columns: `content`, `title`, `authors`, `publication_date`.",
+      "expected_output": "Generates criteria distinguishing benchmark-proposing papers from benchmark-using papers. Should expand 'novel evaluation benchmark' into sub-criteria (new tasks, new metrics, new datasets, reasoning-specific). Criteria should be discriminating enough to reject papers that merely evaluate on existing benchmarks.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I have 2,000 vendor contracts and I need to find which ones have data processing terms that wouldn't comply with GDPR Article 28. Columns: `content`, `vendor_name`, `contract_date`, `jurisdiction`.",
+      "expected_output": "Generates criteria mapping to specific GDPR Article 28 requirements: processor obligations, sub-processor controls, data transfer provisions, audit rights, deletion obligations, breach notification. Should separate hard requirements (must-have for compliance) from soft signals. Creates diagnostic views showing which specific Article 28 requirements each contract fails on.",
+      "files": []
+    }
+  ]
+}
