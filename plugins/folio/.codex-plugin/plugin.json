@@ -7,7 +7,7 @@
     "email": "admin@usefolio.ai",
     "url": "https://github.com/usefolio"
   },
-  "homepage": "https://github.com/usefolio/folio",
+  "homepage": "https://usefolio.ai",
   "repository": "https://github.com/usefolio/folio",
   "license": "UNLICENSED",
   "keywords": [
@@ -29,15 +29,17 @@
       "Interactive",
       "Write"
     ],
-    "websiteURL": "https://github.com/usefolio/folio",
-    "privacyPolicyURL": "https://github.com/usefolio/folio",
-    "termsOfServiceURL": "https://github.com/usefolio/folio",
+    "websiteURL": "https://usefolio.ai",
+    "privacyPolicyURL": "https://usefolio.ai/privacy-policy",
+    "termsOfServiceURL": "https://usefolio.ai/terms-of-use",
     "defaultPrompt": [
       "Install Folio and connect its MCP server in this environment.",
       "Set up a criteria-based search workflow for this document set.",
       "Build a repeatable sensemaking pipeline for due diligence."
     ],
     "brandColor": "#111111",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png",
     "screenshots": []
   }
 }
