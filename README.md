@@ -27,11 +27,9 @@ Folio is a local macOS app and MCP server for running structured ETL workflows o
 
 You import files into a project, each file becomes a row in a table, and then you run bulk LLM operations across rows. Agents do the heavy lifting. Folio gives you the operational surface to steer, validate, and iterate.
 
-Older docs and drafts may refer to Folio as `ngen`.
-
 ## What Folio Solves
 
-Chat-only workflows are great for quick analysis, but they become fragile once workloads get large:
+Text-only AI interactions are great for quick analysis, but they become fragile once workloads get large:
 - You cannot easily observe a multi-step pipeline in a text thread.
 - It is difficult to tune one bad step without re-running everything.
 - Cost and rate-limit behavior becomes opaque at scale.
@@ -45,15 +43,13 @@ Folio addresses those issues by giving agents a table-native ETL workspace with 
 Folio is designed around an iterative loop used in legal, finance, research, and operations workflows.
 
 1. Search
-Read and analyze data across the corpus to surface relevant evidence.
+Read and analyze data across the corpus to surface relevant evidence. Search with LLM prompts instead of vector similarity.
 
 2. Narrow
 Filter, tag, and slice rows into focused views so expensive operations run only where needed.
 
 3. Fuse
 Synthesize structured findings into reports and decision artifacts with source traceability.
-
-This loop repeats until outputs are decision-grade.
 
 ## ETL Model in Practice
 
